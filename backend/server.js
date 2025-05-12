@@ -9,6 +9,7 @@ import { connectDb } from './configs/dbConnection.js';
 
 import authRoute from './routes/auth.route.js';
 import userRoute from './routes/user.route.js';
+import productTypeRoute from './routes/productType.route.js';
 
 dotenv.config({ path: `${process.cwd()}/.env` });
 
@@ -30,6 +31,7 @@ app.use('/uploads', express.static(path.join(path.dirname(''), 'uploads')));
 
 app.use(`/api/auth`, authRoute);
 app.use(`/api/users`, userRoute);
+app.use(`/api/product-types`, productTypeRoute);
 
 app.use('*', (_, res) => {
   res.status(404).json({
