@@ -1,7 +1,45 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import authService from "../../services/auth.service";
+import { toast } from "react-toastify";
+import { CircularProgress } from "@mui/material";
 
 const Login = () => {
+  const navigate = useNavigate();
+  const [credentials, setCredentials] = useState({
+    email: "",
+    password: "",
+  });
+  const [loading, setLoading] = useState(false);
+
+  const handleChange = (e) => {
+    setCredentials((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      const response = await authService.login(credentials);
+
+      // Lưu thông tin đăng nhập vào localStorage
+      localStorage.setItem("accessToken", response.accessToken);
+      localStorage.setItem("refreshToken", response.refreshToken);
+      localStorage.setItem("userId", response.userId);
+
+      toast.success("Login successful!");
+
+      navigate("/product-type");
+      console.log(response);
+    } catch (error) {
+      console.log(error);
+      toast.error("Login failed. Please check your credentials.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-blue-50 to-indigo-100 px-4">
       <div className="bg-white shadow-2xl rounded-xl overflow-hidden max-w-5xl w-full grid md:grid-cols-2">
@@ -49,7 +87,10 @@ const Login = () => {
                 Email
               </label>
               <input
+                onChange={handleChange}
+                value={credentials.email}
                 type="email"
+                name="email"
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
                 required
               />
@@ -60,6 +101,9 @@ const Login = () => {
                 Password
               </label>
               <input
+                name="password"
+                onChange={handleChange}
+                value={credentials.password}
                 type="password"
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
                 required
@@ -67,10 +111,15 @@ const Login = () => {
             </div>
 
             <button
+              onClick={handleSubmit}
               type="submit"
               className="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-2 px-4 rounded-lg font-semibold transition duration-200"
             >
-              Login
+              {loading ? (
+                <CircularProgress size={"1.5rem"} color="inherit" />
+              ) : (
+                "Login"
+              )}
             </button>
           </form>
         </div>

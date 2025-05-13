@@ -1,49 +1,39 @@
-import ApiService from './api.service';
+import ApiService from "./api.service";
 
 class AuthService {
   constructor() {
-    this.api = new ApiService('http://localhost:5000/api/v1/auth');
+    this.api = new ApiService("http://localhost:5000/api/auth");
   }
 
   async login(data) {
     try {
-      const response = await this.api.request('/loginadmin', 'POST', data);
+      const response = await this.api.request("/login", "POST", data);
       return response.data;
     } catch (error) {
-      console.error('Lỗi khi đăng nhập:', error);
+      console.error("Lỗi khi đăng nhập:", error);
       throw error;
     }
   }
 
-  async getAllRoles(accessToken) {
+  async signup(data) {
     try {
-      return await this.api.get('/roles', {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      });
-    } catch (error) {
-      const errorMessage =
-        error.response?.data?.error ||
-        'Lỗi khi lấy dữ liệu người dùng đã đăng nhập';
-      console.error('Lỗi:', errorMessage);
-      throw new Error(errorMessage);
-    }
-  }
+      const formData = new FormData();
 
-  async updateRole(data, accessToken) {
-    try {
-      const response = await this.api.put('/updaterole', data, {
+      // Assuming `data` contains keys: imageFile, username, email, password, etc.
+      for (const key in data) {
+        formData.append(key, data[key]);
+      }
+
+      const response = await this.api.request("/signup", "POST", formData, {
         headers: {
-          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "multipart/form-data",
         },
       });
+
       return response.data;
     } catch (error) {
-      const errorMessage =
-        error.response?.data?.error || 'Lỗi khi cập nhật vai trò người dùng';
-      console.error('Lỗi:', errorMessage);
-      throw new Error(errorMessage);
+      console.error("Error when signing up:", error);
+      throw error;
     }
   }
 }

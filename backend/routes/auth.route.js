@@ -17,10 +17,4 @@ router.post('/signup', upload.single('imageFile'), signUp);
 
 router.post('/login', login);
 
-router.post('/refresh', refreshToken);
-
-router.post('/add-role', auth, isAdmin, addRole);
-
-router.get('/roles', auth, isAdmin, getAllRoles);
-
 export default router;
