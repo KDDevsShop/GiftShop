@@ -54,11 +54,20 @@ class AuthService {
     password,
     confirmPassword,
     phone,
+    gender,
+    dateOfBirth,
     role = 'customer',
     imageFile,
   }) {
     try {
-      if (!fullname || !email || !password || !phone) {
+      if (
+        !fullname ||
+        !email ||
+        !password ||
+        !phone ||
+        !gender ||
+        !dateOfBirth
+      ) {
         throw new ValidationError('Missing required fields!');
       }
 
@@ -102,6 +111,8 @@ class AuthService {
         email,
         password: hashedPassword,
         phone,
+        gender,
+        dateOfBirth,
         avatarImagePath: imageFile,
         role: roleId,
       });

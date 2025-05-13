@@ -93,15 +93,7 @@ const userSchema = new mongoose.Schema(
         ref: 'Address',
       },
     ],
-    isSocialLogin: {
-      type: Boolean,
-      default: false,
-    },
     refreshToken: {
-      type: String,
-      default: null,
-    },
-    emailVerificationToken: {
       type: String,
       default: null,
     },

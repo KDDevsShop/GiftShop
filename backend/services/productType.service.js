@@ -1,5 +1,6 @@
 import { ProductType } from '../models/product.model.js';
 import { isValidObjectId } from '../utils/isValidObjectId.js';
+import { NotFoundError } from '../utils/Error.js';
 
 class ProductTypeService {
   async createProductType(productTypeName) {
@@ -19,7 +20,7 @@ class ProductTypeService {
   async getAllProductTypes() {
     const productTypes = await ProductType.find();
     if (productTypes.length === 0) {
-      throw new Error('No product types found');
+      throw new NotFoundError('No product types found');
     }
     return productTypes;
   }
