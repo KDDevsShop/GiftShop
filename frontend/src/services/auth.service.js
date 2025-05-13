@@ -1,16 +1,16 @@
-import ApiService from "./api.service";
+import ApiService from './api.service';
 
 class AuthService {
   constructor() {
-    this.api = new ApiService("http://localhost:5000/api/auth");
+    this.api = new ApiService('http://localhost:5000/api/auth');
   }
 
   async login(data) {
     try {
-      const response = await this.api.request("/login", "POST", data);
+      const response = await this.api.request('/login', 'POST', data);
       return response.data;
     } catch (error) {
-      console.error("Lỗi khi đăng nhập:", error);
+      console.error('Lỗi khi đăng nhập:', error);
       throw error;
     }
   }
@@ -24,15 +24,25 @@ class AuthService {
         formData.append(key, data[key]);
       }
 
-      const response = await this.api.request("/signup", "POST", formData, {
+      const response = await this.api.request('/signup', 'POST', formData, {
         headers: {
-          "Content-Type": "multipart/form-data",
+          'Content-Type': 'multipart/form-data',
         },
       });
 
       return response.data;
     } catch (error) {
-      console.error("Error when signing up:", error);
+      console.error('Error when signing up:', error);
+      throw error;
+    }
+  }
+
+  async logout() {
+    try {
+      const response = await this.api.request('/logout', 'POST');
+      return response.data;
+    } catch (error) {
+      console.error('Lỗi khi đăng nhập:', error);
       throw error;
     }
   }

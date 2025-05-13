@@ -114,7 +114,7 @@ class AuthService {
         gender,
         dateOfBirth,
         avatarImagePath: imageFile,
-        role: roleId,
+        role: role,
       });
 
       const { accessToken, refreshToken } = generateToken({
@@ -126,7 +126,7 @@ class AuthService {
       await newUser.save();
 
       return {
-        userId: newUser._id,
+        user: newUser,
         accessToken,
         refreshToken,
       };
@@ -145,7 +145,7 @@ class AuthService {
         throw new ValidationError('Invalid email format!');
       }
 
-      const existingUser = await User.findOne({ email });
+      const existingUser = await User.findOne({ email }).populate('role');
 
       if (!existingUser) {
         throw new NotFoundError('User not found!');
@@ -165,7 +165,7 @@ class AuthService {
       await existingUser.save();
 
       return {
-        userId: existingUser._id,
+        user: existingUser,
         accessToken,
         refreshToken,
       };
@@ -209,10 +209,11 @@ class AuthService {
 
   async logout(userId) {
     try {
+      console.log(userId);
       const existingUser = await User.findById(userId);
 
       if (!existingUser) {
-        throw new Error('User not found!');
+        throw new NotFoundError('User not found!');
       }
 
       existingUser.refreshToken = null;

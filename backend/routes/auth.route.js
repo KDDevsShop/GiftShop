@@ -4,6 +4,7 @@ import {
   addRole,
   getAllRoles,
   login,
+  logout,
   refreshToken,
   signUp,
 } from '../controllers/auth.controller.js';
@@ -16,5 +17,7 @@ const router = express.Router();
 router.post('/signup', upload.single('imageFile'), signUp);
 
 router.post('/login', login);
+
+router.post('/logout', auth, logout);
 
 export default router;

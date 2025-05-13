@@ -1,30 +1,55 @@
-import React from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Login from "./pages/authentication/Login";
-import "./App.css";
-import Register from "./pages/authentication/Register";
-import { ToastContainer } from "react-toastify";
-import ProductTypeList from "./pages/admin/ProductTypeList";
+import { Routes, Route } from 'react-router-dom';
+import Login from './pages/authentication/Login';
+import Register from './pages/authentication/Register';
+import ProductTypeList from './pages/admin/ProductTypeList';
+import HomePage from './pages/client/HomePage';
+import CustomerLayout from './layouts/CustomerLayout';
+import ProtectedRoute from './components/ProtectedRoute';
+import { ToastContainer } from 'react-toastify';
+import './App.css';
+import 'react-toastify/dist/ReactToastify.css';
 
 function App() {
   return (
-    <Router>
+    <>
       <Routes>
-        <Route path="/" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/product-type" element={<ProductTypeList />} />
+        <Route
+          path='/'
+          element={
+            <CustomerLayout>
+              <HomePage />
+            </CustomerLayout>
+          }
+        />
+        <Route path='/login' element={<Login />} />
+        <Route
+          path='/register'
+          element={
+            <ProtectedRoute allowedRoles={['customer', 'admin']}>
+              <Register />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path='/product-type'
+          element={
+            <ProtectedRoute allowedRoles={['admin']}>
+              <ProductTypeList />
+            </ProtectedRoute>
+          }
+        />
       </Routes>
 
       <ToastContainer
-        position="top-right"
-        autoClose={2000} // Áp dụng thời gian autoClose cho tất cả các thông báo
+        position='top-right'
+        autoClose={2000}
         hideProgressBar={false}
         closeOnClick={true}
         pauseOnHover={true}
         draggable={true}
-        theme="light"
+        theme='light'
       />
-    </Router>
+    </>
   );
 }
 

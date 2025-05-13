@@ -61,7 +61,7 @@ export const logout = async (req, res) => {
       return res.status(401).json({ error: 'Invalid credentials' });
     }
 
-    const user = await authService.logout();
+    const user = await authService.logout(userId);
     res.status(200).json({ data: user, error: false });
   } catch (error) {
     logError(error, res);

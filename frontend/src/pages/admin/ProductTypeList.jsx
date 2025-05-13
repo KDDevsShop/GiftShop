@@ -1,13 +1,13 @@
-import React, { useEffect, useState } from "react";
-import AdminLayout from "./../../layouts/AdminLayout.jsx";
-import ProductTypeService from "../../services/productType.service";
-import Datatable from "../../components/Datatable";
-import { useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from 'react';
+import AdminLayout from './../../layouts/AdminLayout.jsx';
+import ProductTypeService from '../../services/productType.service';
+import Datatable from '../../components/Datatable';
+import { useNavigate } from 'react-router-dom';
 
 const ProductTypeList = () => {
   const [productTypes, setProductTypes] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+  const [error, setError] = useState('');
 
   const navigate = useNavigate();
 
@@ -17,7 +17,7 @@ const ProductTypeList = () => {
         const data = await ProductTypeService.getAll();
         setProductTypes(data);
       } catch (err) {
-        setError("Failed to load product types");
+        setError('Failed to load product types');
         console.error(err);
       } finally {
         setLoading(false);
@@ -25,10 +25,10 @@ const ProductTypeList = () => {
     };
 
     fetchProductTypes();
-  }, [productTypes]);
+  }, []);
 
   const handleAdd = () => {
-    navigate("/admin/product-types/create");
+    navigate('/admin/product-types/create');
   };
 
   const handleView = (row) => {
@@ -46,24 +46,24 @@ const ProductTypeList = () => {
     try {
       await ProductTypeService.delete(
         row.id,
-        localStorage.getItem("accessToken")
+        localStorage.getItem('accessToken')
       );
       setProductTypes((prev) => prev.filter((item) => item.id !== row.id));
     } catch (err) {
-      alert("Failed to delete product type.");
+      alert('Failed to delete product type.');
       console.error(err);
     }
   };
 
   const columns = [
     {
-      field: "no",
-      headerName: "No.",
+      field: 'no',
+      headerName: 'No.',
       width: 100,
     },
     {
-      field: "productTypeName",
-      headerName: "Product Type Name",
+      field: 'productTypeName',
+      headerName: 'Product Type Name',
       flex: 1,
     },
   ];
@@ -77,7 +77,7 @@ const ProductTypeList = () => {
   return (
     <AdminLayout>
       <Datatable
-        title="Product Types"
+        title='Product Types'
         rows={rows}
         columns={columns}
         loading={loading}
