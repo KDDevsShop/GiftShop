@@ -10,6 +10,7 @@ import {
 import UserProfileForm from '../../components/UserProfileForm';
 import { FiLogOut } from 'react-icons/fi';
 import authService from '../../services/auth.service.js';
+import AddressSection from '../../components/AddressSection.jsx';
 
 function ProfilePage() {
   const location = useLocation();
@@ -43,8 +44,8 @@ function ProfilePage() {
     switch (selectedTab) {
       case 'profile':
         return <UserProfileForm />;
-      // case 'address':
-      //   return <AddressSection />;
+      case 'address':
+        return <AddressSection />;
       // case 'change-password':
       //   return <PasswordResetForm />;
       // case 'orders':
