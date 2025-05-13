@@ -8,6 +8,8 @@ import ProtectedRoute from './components/ProtectedRoute';
 import { ToastContainer } from 'react-toastify';
 import './App.css';
 import 'react-toastify/dist/ReactToastify.css';
+import NotFoundPage from './pages/NotFoundPage';
+import UserInfo from './pages/client/UserInfo';
 
 function App() {
   return (
@@ -18,6 +20,14 @@ function App() {
           element={
             <CustomerLayout>
               <HomePage />
+            </CustomerLayout>
+          }
+        />
+        <Route
+          path='/me'
+          element={
+            <CustomerLayout>
+              <UserInfo />
             </CustomerLayout>
           }
         />
@@ -38,6 +48,8 @@ function App() {
             </ProtectedRoute>
           }
         />
+
+        <Route path='*' element={<NotFoundPage />}></Route>
       </Routes>
 
       <ToastContainer

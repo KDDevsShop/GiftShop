@@ -31,7 +31,9 @@ const Login = () => {
 
       toast.success('Login successful!');
 
-      navigate('/product-type');
+      response.user.role.role === 'admin'
+        ? navigate('/product-type')
+        : navigate('/');
       console.log(response);
     } catch (error) {
       console.log(error);
