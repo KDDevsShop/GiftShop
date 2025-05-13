@@ -27,19 +27,14 @@ function App() {
           path='/me'
           element={
             <CustomerLayout>
-              <UserInfo />
+              <ProtectedRoute allowedRoles={['customer', 'admin']}>
+                <UserInfo />
+              </ProtectedRoute>
             </CustomerLayout>
           }
         />
         <Route path='/login' element={<Login />} />
-        <Route
-          path='/register'
-          element={
-            <ProtectedRoute allowedRoles={['customer', 'admin']}>
-              <Register />
-            </ProtectedRoute>
-          }
-        />
+        <Route path='/register' element={<Register />} />
         <Route
           path='/product-type'
           element={

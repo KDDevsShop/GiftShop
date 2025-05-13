@@ -4,6 +4,7 @@ import logError from '../utils/logError.js';
 export const getLoggedInUser = async (req, res) => {
   try {
     const { userId } = req.userId;
+    console.log('req.userId ' + req.userId);
     if (!userId) {
       return res.status(401).json({ error: 'Invalid credentials' });
     }
@@ -44,6 +45,7 @@ export const getUserById = async (req, res) => {
 
 export const updateUserInfo = async (req, res) => {
   try {
+    console.log(req.userId);
     const updatedUser = await userService.updateUserInfo(
       req.userId.userId,
       req.body

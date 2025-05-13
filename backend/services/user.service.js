@@ -1,4 +1,5 @@
 import { User, UserRole } from '../models/user.model.js';
+import { ValidationError } from '../utils/Error.js';
 import { isValidObjectId } from '../utils/isValidObjectId.js';
 import { validateEmail, validatePhone } from '../utils/validation.js';
 import bcrypt from 'bcrypt';
@@ -6,7 +7,7 @@ import bcrypt from 'bcrypt';
 class UserService {
   async getUserById(userId) {
     if (!userId || !isValidObjectId(userId)) {
-      throw new Error('Invalid Id');
+      throw new ValidationError('Invalid Id');
     }
     const user = await User.findById(userId)
       .select('-password -refreshToken')

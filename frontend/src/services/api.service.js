@@ -1,29 +1,29 @@
-import authService from "./authService.js";
+import authService from './authService.js';
 
 class ApiService {
   constructor(baseUrl = import.meta.env.VITE_API_BASE_URL) {
-    this.baseUrl = baseUrl || "http://localhost:5000/api";
+    this.baseUrl = baseUrl || 'http://localhost:5000/api';
     this.authService = authService;
   }
 
-  async request(endpoint, method = "GET", body = null, headers = {}) {
+  async request(endpoint, method = 'GET', body = null, headers = {}) {
     const url = `${this.baseUrl}${endpoint}`;
     const accessToken = this.authService.getAccessToken();
 
     const options = {
       method,
       headers: {
-        Authorization: accessToken ? `Bearer ${accessToken}` : "",
+        Authorization: accessToken ? `Bearer ${accessToken}` : '',
         ...headers,
       },
     };
 
     if (body instanceof FormData) {
       options.body = body;
-      delete options.headers["Content-Type"];
-    } else if (body && method !== "GET" && method !== "HEAD") {
+      delete options.headers['Content-Type'];
+    } else if (body && method !== 'GET' && method !== 'HEAD') {
       options.body = JSON.stringify(body);
-      options.headers["Content-Type"] = "application/json";
+      options.headers['Content-Type'] = 'application/json';
     }
 
     try {
@@ -39,7 +39,7 @@ class ApiService {
         if (newToken) {
           return this.retryRequest(endpoint, method, body, headers);
         } else {
-          throw new Error("Unable to refresh token");
+          throw new Error('Unable to refresh token');
         }
       }
 
@@ -47,7 +47,7 @@ class ApiService {
 
       if (data.error) {
         console.log(data.error);
-        throw new Error(data.error || "Error on fetching data");
+        throw new Error(data.error || 'Error on fetching data');
       }
 
       return data;
@@ -61,19 +61,21 @@ class ApiService {
     const refreshToken = this.authService.getRefreshToken();
 
     if (!refreshToken) {
-      throw new Error("No Refresh Token available");
+      throw new Error('No Refresh Token available');
     }
 
     try {
       const response = await fetch(`http://localhost:5000/api/auth/refresh`, {
-        method: "POST",
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({ refreshToken }),
       });
 
       const data = await response.json();
+
+      console.log(data);
 
       if (data.error) {
         console.log(data.error);
@@ -104,10 +106,10 @@ class ApiService {
 
     if (body instanceof FormData) {
       options.body = body;
-      delete options.headers["Content-Type"];
-    } else if (body && method !== "GET" && method !== "HEAD") {
+      delete options.headers['Content-Type'];
+    } else if (body && method !== 'GET' && method !== 'HEAD') {
       options.body = JSON.stringify(body);
-      options.headers["Content-Type"] = "application/json";
+      options.headers['Content-Type'] = 'application/json';
     }
 
     const response = await fetch(url, options);
@@ -123,19 +125,19 @@ class ApiService {
   }
 
   get(endpoint, headers = {}) {
-    return this.request(endpoint, "GET", null, headers);
+    return this.request(endpoint, 'GET', null, headers);
   }
 
   post(endpoint, body, headers = {}) {
-    return this.request(endpoint, "POST", body, headers);
+    return this.request(endpoint, 'POST', body, headers);
   }
 
   put(endpoint, body, headers = {}) {
-    return this.request(endpoint, "PUT", body, headers);
+    return this.request(endpoint, 'PUT', body, headers);
   }
 
   delete(endpoint, headers = {}) {
-    return this.request(endpoint, "DELETE", null, headers);
+    return this.request(endpoint, 'DELETE', null, headers);
   }
 }
 

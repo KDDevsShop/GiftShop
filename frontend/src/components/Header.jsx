@@ -1,37 +1,88 @@
-import React from 'react';
-import { useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useMemo } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 
 const Header = () => {
   const navigate = useNavigate();
   const user = useMemo(() => JSON.parse(localStorage.getItem('user')), []);
 
   return (
-    <header className='bg-white shadow-sm px-6 py-4 flex items-center justify-between'>
-      {/* Logo / Title */}
-      <div className='text-xl font-bold text-indigo-600'>🎁 GiftApp</div>
+    <nav className='bg-purple-600 py-4 text-white shadow-lg'>
+      <div className='container mx-auto flex items-center justify-between px-4'>
+        {/* Logo / Brand */}
+        <Link to='/' className='text-2xl font-bold text-white'>
+          Gift Discovery
+        </Link>
 
-      {/* Navigation - Add more links if needed */}
-      <nav className='hidden md:flex space-x-6 text-sm text-gray-600'>
-        <a href='/' className='hover:text-indigo-600'>
-          Home
-        </a>
-        <a href='#' className='hover:text-indigo-600'>
-          Gifts
-        </a>
-        <a href='#' className='hover:text-indigo-600'>
-          Contact
-        </a>
-      </nav>
+        {/* Navigation Links */}
+        <ul className='flex items-center space-x-8'>
+          <li>
+            <Link
+              to='/'
+              className='text-white hover:opacity-80 transition-opacity'
+            >
+              Home
+            </Link>
+          </li>
+          <li>
+            <Link
+              to='/'
+              className='text-white hover:opacity-80 transition-opacity'
+            >
+              Gift
+            </Link>
+          </li>
+          <li>
+            <Link
+              to='/mbti-test'
+              className='bg-purple-700 text-white py-2 px-4 rounded-md shadow-sm hover:bg-purple-500 transition-all'
+            >
+              Find Your Perfect Gift
+            </Link>
+          </li>
 
-      {/* User avatar */}
-      <button
-        onClick={() => navigate('/me')}
-        className='w-10 h-10 flex items-center justify-center rounded-full bg-indigo-600 text-white font-semibold cursor-pointer'
-      >
-        {user.fullname.charAt(0).toUpperCase()}
-      </button>
-    </header>
+          {/* User Navigation */}
+          {user ? (
+            <>
+              <li>
+                <button
+                  onClick={() => navigate('/me')}
+                  className='w-10 h-10 rounded-full bg-white flex items-center justify-center text-purple-600 font-semibold cursor-pointer overflow-hidden'
+                >
+                  {user.avatarImagePath ? (
+                    <img
+                      src={user.avatarImagePath}
+                      alt='User Avatar'
+                      className='w-full h-full object-cover'
+                    />
+                  ) : (
+                    user.fullname.charAt(0).toUpperCase()
+                  )}
+                </button>
+              </li>
+            </>
+          ) : (
+            <>
+              <li>
+                <Link
+                  to='/login'
+                  className='text-white hover:opacity-80 transition-opacity'
+                >
+                  Login
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to='/register'
+                  className='bg-white text-purple-600 py-2 px-4 rounded-md shadow-sm hover:bg-gray-100 transition-all'
+                >
+                  Register
+                </Link>
+              </li>
+            </>
+          )}
+        </ul>
+      </div>
+    </nav>
   );
 };
 

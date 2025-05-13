@@ -8,19 +8,20 @@ import {
   updateUserInfo,
 } from '../controllers/user.controller.js';
 import upload from '../configs/multerConfig.js';
+import { auth, isAdmin } from '../middlewares/authentication.js';
 
 const router = express.Router();
 
-router.get('', getAllUsers);
+router.get('', auth, isAdmin, getAllUsers);
+
+router.get('/current', auth, getLoggedInUser);
 
 router.get('/:id', getUserById);
 
-router.get('/current', getLoggedInUser);
+router.put('/', auth, updateUserInfo);
 
-router.put('/', updateUserInfo);
+router.put('/password', auth, updatePassword);
 
-router.put('/password', updatePassword);
-
-router.put('/avatar', upload.single('avatar'), changeAvatar);
+router.put('/avatar', auth, upload.single('avatar'), changeAvatar);
 
 export default router;

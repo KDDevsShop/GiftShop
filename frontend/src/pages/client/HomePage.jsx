@@ -1,42 +1,35 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import {
   Card,
   CardMedia,
   CardContent,
   CardActions,
-  Accordion,
-  AccordionSummary,
-  AccordionDetails,
-  Chip,
   CircularProgress,
 } from '@mui/material';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import SearchIcon from '@mui/icons-material/Search';
+import productService from '../../services/product.service';
 
 const HomePage = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
   const [gifts, setGifts] = useState([]);
-  const [categories, setCategories] = useState([]);
-  const [searchTerm, setSearchTerm] = useState('');
 
-  // Mock API call
-  useEffect(() => {
+  const fetchProducts = async () => {
     setLoading(true);
-    let gifts = [];
 
     try {
-      setTimeout(() => {}, 3000);
+      const response = await productService.getProducts(10);
+      setGifts(response);
     } catch (error) {
       console.log(error);
-      setError(error);
     } finally {
       setLoading(false);
     }
+  };
 
-    return () => clearTimeout();
+  // Mock API call
+  useEffect(() => {
+    fetchProducts();
   }, []);
 
   if (loading)
@@ -45,8 +38,6 @@ const HomePage = () => {
         <CircularProgress />
       </div>
     );
-  if (error)
-    return <div className='text-center text-red-600 py-20'>{error}</div>;
 
   return (
     <div className='max-w-6xl mx-auto px-4 py-8'>
@@ -169,28 +160,32 @@ const HomePage = () => {
       {/* Gift Cards */}
       <section className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8'>
         {gifts.map((gift) => (
-          <Card key={gift.id} className='shadow-lg rounded-lg overflow-hidden'>
-            <CardMedia
-              component='img'
-              height='200'
-              image={gift.imageUrl}
-              alt={gift.name}
+          <div
+            key={gift.id}
+            className='max-w-xs bg-white shadow-lg rounded-lg overflow-hidden transition-transform transform hover:scale-105 hover:shadow-xl'
+          >
+            <img
+              src={`http://localhost:5000/${gift?.productImagePath}`}
+              alt={gift?.productName}
+              className='w-full h-64 object-cover'
             />
-            <CardContent>
-              <h3 className='text-xl font-semibold text-gray-800'>
-                {gift.name}
+            <div className='p-4'>
+              <h3 className='text-xl font-semibold text-gray-800 truncate'>
+                {gift?.productName}
               </h3>
-              <p className='text-lg font-bold text-purple-600'>${gift.price}</p>
-            </CardContent>
-            <CardActions>
+              <p className='text-lg font-bold text-purple-600 mt-2'>
+                ${gift?.price}
+              </p>
+            </div>
+            <div className='px-4 pb-4 flex justify-end'>
               <Link
-                to={`/gift/${gift.id}`}
-                className='ml-4 mb-2 text-purple-600 hover:text-purple-800'
+                to={`/gift/${gift?._id}`}
+                className='text-sm font-medium text-purple-600 bg-purple-100 px-4 py-2 rounded-lg hover:bg-purple-600 hover:text-white transition-colors'
               >
                 View Details
               </Link>
-            </CardActions>
-          </Card>
+            </div>
+          </div>
         ))}
       </section>
     </div>
