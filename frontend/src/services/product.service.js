@@ -6,7 +6,7 @@ class ProductsService {
   }
 
   async getProducts(query = {}, page, limit, sortBy) {
-    console.log(query.toString());
+    console.log(query?.toString());
     if (!(query instanceof URLSearchParams)) {
       query = new URLSearchParams(query);
     }
@@ -17,7 +17,7 @@ class ProductsService {
     if (sortBy) query.append('sortBy', sortBy);
 
     try {
-      const response = await this.api.get(`/?${query.toString()}`);
+      const response = await this.api.get(`/?${query && query.toString()}`);
       return response;
     } catch (error) {
       if (error.response) {

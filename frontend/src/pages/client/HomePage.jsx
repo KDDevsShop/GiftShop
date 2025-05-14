@@ -18,8 +18,8 @@ const HomePage = () => {
     setLoading(true);
 
     try {
-      const response = await productService.getProducts(10);
-      setGifts(response);
+      const response = await productService.getProducts(null, 1, 12, null);
+      setGifts(response.data);
     } catch (error) {
       console.log(error);
     } finally {
