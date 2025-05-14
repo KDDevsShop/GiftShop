@@ -33,51 +33,52 @@ class ProductService {
     const {
       page = 1,
       limit = 10,
-      productType,
       traits,
-      recommendedTypes,
+      mbti,
       searchString,
       sortBy = 'createdAt',
       isDesc = false,
     } = query;
 
-    const filters = {};
+    const filters = [];
 
-    console.log('isValidObjectId(productType) ', isValidObjectId(productType));
-
-    if (productType && isValidObjectId(productType)) {
-      filters.productType = productType;
-    }
-
+    // Partial Traits Match (OR logic)
     if (traits) {
       const traitList = Array.isArray(traits) ? traits : traits.split(',');
-      filters.traits = { $all: traitList };
+      filters.push({ traits: { $in: traitList } });
     }
 
-    if (recommendedTypes) {
-      const recommendedTypeList = Array.isArray(recommendedTypes)
-        ? recommendedTypes
-        : recommendedTypes.split(',');
-      filters.recommendedTypes = { $in: recommendedTypeList };
+    // MBTI (OR logic)
+    if (mbti) {
+      const recommendedTypeList = Array.isArray(mbti) ? mbti : mbti.split(',');
+      filters.push({ recommendedTypes: { $in: recommendedTypeList } });
     }
 
+    // Full-Text Search
     if (searchString) {
-      filters.$text = { $search: searchString };
+      filters.push({ $text: { $search: searchString } });
     }
 
+    // Merge filters with OR logic if multiple filters are present
+    const finalFilter = filters.length > 0 ? { $or: filters } : {};
+
+    // Sorting
     const sortDirection = isDesc === 'true' ? -1 : 1;
     const sortOptions = { [sortBy]: sortDirection };
 
     // Fetch Products
-    const products = await Product.find(filters)
-      .populate('productType', 'productTypeName')
+    const products = await Product.find(finalFilter)
+      .populate({
+        path: 'productType',
+        select: 'productTypeName',
+      })
       .skip((page - 1) * limit)
       .limit(parseInt(limit))
       .sort(sortOptions)
       .exec();
 
     // Total Count
-    const totalDocs = await Product.countDocuments(filters);
+    const totalDocs = await Product.countDocuments(finalFilter);
     const totalPages = Math.ceil(totalDocs / limit);
 
     return {

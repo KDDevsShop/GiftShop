@@ -1,11 +1,9 @@
 import { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import productTypeService from '../../services/productType.service';
 
 const Filter = ({ onTypeChange, onRecommendedChange }) => {
   const [selectedTypes, setSelectedTypes] = useState([]);
   const [selectedRecommendations, setSelectedRecommendations] = useState([]);
-  const [types, setTypes] = useState([]);
   const [recommendedTypes] = useState([
     'ISTJ',
     'ISFJ',
@@ -26,19 +24,6 @@ const Filter = ({ onTypeChange, onRecommendedChange }) => {
   ]);
 
   useEffect(() => {
-    const fetchTypes = async () => {
-      try {
-        const typeResponse = await productTypeService.getAll();
-        setTypes(typeResponse);
-      } catch (error) {
-        console.error('Error fetching product types:', error);
-      }
-    };
-
-    fetchTypes();
-  }, []);
-
-  useEffect(() => {
     onTypeChange(selectedTypes);
   }, [selectedTypes, onTypeChange]);
 
@@ -46,7 +31,7 @@ const Filter = ({ onTypeChange, onRecommendedChange }) => {
     onRecommendedChange(selectedRecommendations);
   }, [selectedRecommendations, onRecommendedChange]);
 
-  const handleSelectionChange = (value, setSelected, selected) => {
+  const handleSelectionChange = (value, setSelected) => {
     setSelected((prev) =>
       prev.includes(value)
         ? prev.filter((item) => item !== value)
@@ -64,22 +49,6 @@ const Filter = ({ onTypeChange, onRecommendedChange }) => {
       <h1 className='text-3xl text-purple-800 font-semibold text-center mb-8'>
         Filter
       </h1>
-
-      {/* Product Types */}
-      <h3 className='text-lg font-semibold mb-4'>Product Types</h3>
-      {types.map((type) => (
-        <label key={type._id} className='block text-sm text-gray-700 mb-2'>
-          <input
-            type='checkbox'
-            className='mr-2 transform scale-125'
-            checked={selectedTypes.includes(type._id)}
-            onChange={() =>
-              handleSelectionChange(type._id, setSelectedTypes, selectedTypes)
-            }
-          />
-          {type.productTypeName}
-        </label>
-      ))}
 
       {/* Recommended Types */}
       <h3 className='text-lg font-semibold my-4'>Recommended Types</h3>

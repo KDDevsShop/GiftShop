@@ -15,9 +15,6 @@ const ProductPage = () => {
 
   const [selectedTypes, setSelectedTypes] = useState([]);
   const [selectedRecommendations, setSelectedRecommendations] = useState([]);
-  const [sortBy, setSortBy] = useState('');
-  const [sortOption, setSortOption] = useState(query.get('sortBy'));
-  const [isDesc, setIsDesc] = useState('false');
   const [products, setProducts] = useState([]);
   const [totalPage, setTotalPage] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -38,17 +35,12 @@ const ProductPage = () => {
             selectedRecommendations.join(',')
           );
 
-        updatedQuery.set('sortBy', sortOption);
-        updatedQuery.set('isDesc', isDesc);
-
         const response = await productService.getProducts(
           updatedQuery,
           page,
-          12,
-          sortBy
+          8,
+          null
         );
-
-        console.log(response);
 
         setProducts(response.data);
         setTotalPage(response.meta.totalPages);
@@ -62,15 +54,7 @@ const ProductPage = () => {
     };
 
     fetchProducts();
-  }, [
-    location.search,
-    selectedTypes,
-    selectedRecommendations,
-    sortOption,
-    isDesc,
-    page,
-    sortBy,
-  ]);
+  }, [location.search, selectedTypes, selectedRecommendations, page]);
 
   const handleTypeChange = (types) => {
     setSelectedTypes(types);
@@ -78,18 +62,6 @@ const ProductPage = () => {
 
   const handleRecommendedChange = (recommendations) => {
     setSelectedRecommendations(recommendations);
-  };
-
-  const handleSortChange = (e) => {
-    const value = e.target.value;
-    setSortOption(value);
-    if (value === 'default') {
-      setSortBy('');
-      setIsDesc('false');
-      return;
-    }
-    setSortBy('price');
-    setIsDesc(value === 'desc' ? 'true' : 'false');
   };
 
   const productType = products[0]?.productTypeDetails?.productTypeName;
@@ -122,23 +94,6 @@ const ProductPage = () => {
             </div>
           ) : (
             <>
-              <div className='flex justify-between bg-gray-50 rounded-lg px-4 mb-8'>
-                <div className='flex items-center space-x-2'>
-                  <span className='font-semibold text-sm sm:text-lg'>
-                    Sắp xếp:
-                  </span>
-                  <select
-                    value={sortOption}
-                    onChange={handleSortChange}
-                    className='border text-xs sm:text-base border-gray-300 py-1 px-3 rounded-md focus:outline-none bg-white text-gray-700 hover:border-[#EA580C] focus:ring-[#EA580C] focus:border-[#EA580C] focus-visible:ring-[#EA580C]'
-                  >
-                    <option value='default'>Mặc định</option>
-                    <option value='asc'>Giá tăng dần</option>
-                    <option value='desc'>Giá giảm dần</option>
-                  </select>
-                </div>
-              </div>
-
               <div className='grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3'>
                 {products.map((product, index) => (
                   <ProductItem key={index} product={product} />

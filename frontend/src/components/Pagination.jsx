@@ -20,8 +20,16 @@ const CustomPagination = ({ path, totalPages }) => {
         // Generate the URL for each page
         const to = `${path}?${updatedQuery.toString()}`;
 
-        return <PaginationItem component={Link} to={to} {...item} />;
+        return (
+          <PaginationItem
+            component={Link}
+            to={to}
+            {...item}
+            className='mx-auto'
+          />
+        );
       }}
+      className='mt-8 mx-auto w-full text-center ms-auto flex items-center justify-center'
     />
   );
 };

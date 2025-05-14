@@ -22,7 +22,7 @@ export const createProduct = async (req, res) => {
 // Get all products
 export const getAllProducts = async (req, res) => {
   try {
-    const { traits, recommendedTypes, ...restQuery } = req.query;
+    const { traits, mbti, ...restQuery } = req.query;
 
     // Ensure traits and recommendedTypes are properly parsed as arrays
     const parsedTraits = Array.isArray(traits)
@@ -30,17 +30,17 @@ export const getAllProducts = async (req, res) => {
       : traits
       ? traits.split(',')
       : [];
-    const parsedRecommendedTypes = Array.isArray(recommendedTypes)
-      ? recommendedTypes
-      : recommendedTypes
-      ? recommendedTypes.split(',')
+    const parsedRecommendedTypes = Array.isArray(mbti)
+      ? mbti
+      : mbti
+      ? mbti.split(',')
       : [];
 
     // Combine the remaining query parameters
     const query = {
       ...restQuery,
       traits: parsedTraits.length > 0 ? parsedTraits : undefined,
-      recommendedTypes:
+      mbti:
         parsedRecommendedTypes.length > 0 ? parsedRecommendedTypes : undefined,
     };
 
