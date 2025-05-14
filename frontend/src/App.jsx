@@ -10,6 +10,8 @@ import './App.css';
 import 'react-toastify/dist/ReactToastify.css';
 import NotFoundPage from './pages/NotFoundPage';
 import UserInfo from './pages/client/UserInfo';
+import MBTITest from './pages/client/MBTITest';
+import ProductPage from './pages/client/ProductPage';
 
 function App() {
   return (
@@ -23,6 +25,9 @@ function App() {
             </CustomerLayout>
           }
         />
+        <Route path='/login' element={<Login />} />
+        <Route path='/register' element={<Register />} />
+
         <Route
           path='/me'
           element={
@@ -33,8 +38,27 @@ function App() {
             </CustomerLayout>
           }
         />
-        <Route path='/login' element={<Login />} />
-        <Route path='/register' element={<Register />} />
+        <Route
+          path='/mbti-test'
+          element={
+            <CustomerLayout>
+              <ProtectedRoute allowedRoles={['customer', 'admin']}>
+                <MBTITest />
+              </ProtectedRoute>
+            </CustomerLayout>
+          }
+        />
+        <Route
+          path='/products'
+          element={
+            <CustomerLayout>
+              <ProtectedRoute allowedRoles={['customer', 'admin']}>
+                <ProductPage />
+              </ProtectedRoute>
+            </CustomerLayout>
+          }
+        />
+
         <Route
           path='/product-type'
           element={
@@ -44,7 +68,7 @@ function App() {
           }
         />
 
-        <Route path='*' element={<NotFoundPage />}></Route>
+        <Route path='*' element={<NotFoundPage />} />
       </Routes>
 
       <ToastContainer

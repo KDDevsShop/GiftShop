@@ -25,7 +25,7 @@ const Header = () => {
           </li>
           <li>
             <Link
-              to='/'
+              to='/products'
               className='text-white hover:opacity-80 transition-opacity'
             >
               Gift

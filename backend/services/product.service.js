@@ -30,19 +30,53 @@ class ProductService {
 
   // Get all products with pagination and optional filtering
   async getAllProducts(query = {}) {
-    const { page = 1, limit = 10, productType } = query;
+    const {
+      page = 1,
+      limit = 10,
+      productType,
+      traits,
+      recommendedTypes,
+      searchString,
+      sortBy = 'createdAt',
+      isDesc = false,
+    } = query;
 
     const filters = {};
+
+    console.log('isValidObjectId(productType) ', isValidObjectId(productType));
+
     if (productType && isValidObjectId(productType)) {
       filters.productType = productType;
     }
 
+    if (traits) {
+      const traitList = Array.isArray(traits) ? traits : traits.split(',');
+      filters.traits = { $all: traitList };
+    }
+
+    if (recommendedTypes) {
+      const recommendedTypeList = Array.isArray(recommendedTypes)
+        ? recommendedTypes
+        : recommendedTypes.split(',');
+      filters.recommendedTypes = { $in: recommendedTypeList };
+    }
+
+    if (searchString) {
+      filters.$text = { $search: searchString };
+    }
+
+    const sortDirection = isDesc === 'true' ? -1 : 1;
+    const sortOptions = { [sortBy]: sortDirection };
+
+    // Fetch Products
     const products = await Product.find(filters)
       .populate('productType', 'productTypeName')
       .skip((page - 1) * limit)
       .limit(parseInt(limit))
+      .sort(sortOptions)
       .exec();
 
+    // Total Count
     const totalDocs = await Product.countDocuments(filters);
     const totalPages = Math.ceil(totalDocs / limit);
 

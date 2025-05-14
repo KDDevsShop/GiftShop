@@ -159,13 +159,17 @@ const HomePage = () => {
 
       {/* Gift Cards */}
       <section className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8'>
-        {gifts.map((gift) => (
+        {gifts?.map((gift) => (
           <div
             key={gift.id}
             className='max-w-xs bg-white shadow-lg rounded-lg overflow-hidden transition-transform transform hover:scale-105 hover:shadow-xl'
           >
             <img
-              src={`http://localhost:5000/${gift?.productImagePath}`}
+              src={
+                gift?.productImagePath
+                  ? `http://localhost:5000/${gift?.productImagePath}`
+                  : '/images/gift-placeholder.avif'
+              }
               alt={gift?.productName}
               className='w-full h-64 object-cover'
             />

@@ -9,13 +9,11 @@ export const createProduct = async (req, res) => {
       productImagePath: req.files?.map((file) => file.path) || [],
     };
     const product = await productService.createProduct(productData);
-    res
-      .status(201)
-      .json({
-        data: product,
-        error: false,
-        message: 'Product created successfully!',
-      });
+    res.status(201).json({
+      data: product,
+      error: false,
+      message: 'Product created successfully!',
+    });
   } catch (error) {
     logError(error, res);
   }
@@ -24,7 +22,29 @@ export const createProduct = async (req, res) => {
 // Get all products
 export const getAllProducts = async (req, res) => {
   try {
-    const data = await productService.getAllProducts(req.query);
+    const { traits, recommendedTypes, ...restQuery } = req.query;
+
+    // Ensure traits and recommendedTypes are properly parsed as arrays
+    const parsedTraits = Array.isArray(traits)
+      ? traits
+      : traits
+      ? traits.split(',')
+      : [];
+    const parsedRecommendedTypes = Array.isArray(recommendedTypes)
+      ? recommendedTypes
+      : recommendedTypes
+      ? recommendedTypes.split(',')
+      : [];
+
+    // Combine the remaining query parameters
+    const query = {
+      ...restQuery,
+      traits: parsedTraits.length > 0 ? parsedTraits : undefined,
+      recommendedTypes:
+        parsedRecommendedTypes.length > 0 ? parsedRecommendedTypes : undefined,
+    };
+
+    const data = await productService.getAllProducts(query);
     res.status(200).json({
       data: data.products,
       error: false,
@@ -61,13 +81,11 @@ export const updateProduct = async (req, res) => {
       req.params.id,
       updatedData
     );
-    res
-      .status(200)
-      .json({
-        data: updatedProduct,
-        error: false,
-        message: 'Product updated successfully!',
-      });
+    res.status(200).json({
+      data: updatedProduct,
+      error: false,
+      message: 'Product updated successfully!',
+    });
   } catch (error) {
     logError(error, res);
   }
@@ -77,13 +95,11 @@ export const updateProduct = async (req, res) => {
 export const deleteProduct = async (req, res) => {
   try {
     const result = await productService.deleteProduct(req.params.id);
-    res
-      .status(200)
-      .json({
-        data: result,
-        error: false,
-        message: 'Product deleted successfully!',
-      });
+    res.status(200).json({
+      data: result,
+      error: false,
+      message: 'Product deleted successfully!',
+    });
   } catch (error) {
     logError(error, res);
   }
