@@ -18,6 +18,8 @@ import UserList from './pages/admin/UserList';
 import ProductDetail from './pages/client/ProductDetailPage';
 import CartPage from './pages/client/CartPage';
 import OrderList from './pages/admin/OrderList';
+import OrderPage from './pages/client/OrderPage';
+import ThankYouPage from './pages/client/ThanksPage';
 
 function App() {
   return (
