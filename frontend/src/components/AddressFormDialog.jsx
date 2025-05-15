@@ -116,29 +116,29 @@ const AddressFormDialog = ({ open, onClose, addressData = {} }) => {
           addressData._id,
           accessToken
         );
-        toast.success('Đổi địa chỉ thành công');
+        toast.success('Success!');
       } else {
         await addressService.createAddress(formData, accessToken);
-        toast.success('Tạo địa chỉ thành công');
+        toast.success('Success!');
       }
       await addressService.getUserAddress(accessToken);
       onClose();
     } catch (error) {
-      toast.error('Thao tác thất bại!');
+      toast.error('An error occurred');
       console.error('Error creating/updating address:', error);
     }
   };
 
   return (
     <Dialog open={open} onClose={onClose}>
-      <DialogTitle>Địa chỉ mới</DialogTitle>
+      <DialogTitle>New Address</DialogTitle>
       <DialogContent>
         <TextField
           autoFocus
           required
           margin='dense'
           id='fullName'
-          label='Họ và tên'
+          label='Fullname'
           type='text'
           fullWidth
           variant='standard'
@@ -149,7 +149,7 @@ const AddressFormDialog = ({ open, onClose, addressData = {} }) => {
           required
           margin='dense'
           id='phoneNumber'
-          label='Số điện thoại'
+          label='Phone number'
           type='tel'
           fullWidth
           variant='standard'
@@ -166,7 +166,7 @@ const AddressFormDialog = ({ open, onClose, addressData = {} }) => {
           renderInput={(params) => (
             <TextField
               {...params}
-              label='Tỉnh/ Thành phố'
+              label='Province'
               margin='dense'
               variant='standard'
               required
@@ -183,7 +183,7 @@ const AddressFormDialog = ({ open, onClose, addressData = {} }) => {
           renderInput={(params) => (
             <TextField
               {...params}
-              label='Quận/ Huyện'
+              label='District'
               margin='dense'
               variant='standard'
               required
@@ -200,7 +200,7 @@ const AddressFormDialog = ({ open, onClose, addressData = {} }) => {
           renderInput={(params) => (
             <TextField
               {...params}
-              label='Phường/ Xã'
+              label='Commune'
               margin='dense'
               variant='standard'
               required
@@ -211,7 +211,7 @@ const AddressFormDialog = ({ open, onClose, addressData = {} }) => {
           required
           margin='dense'
           id='detail'
-          label='Địa chỉ cụ thể'
+          label='Detail'
           type='text'
           fullWidth
           variant='standard'
@@ -227,15 +227,15 @@ const AddressFormDialog = ({ open, onClose, addressData = {} }) => {
               color='primary'
             />
           }
-          label='Đặt làm địa chỉ mặc định'
+          label='Set as default address'
         />
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose} color='primary'>
-          Trở Lại
+          Back
         </Button>
         <Button type='button' onClick={handleSubmit} color='primary'>
-          Hoàn thành
+          Confirm
         </Button>
       </DialogActions>
     </Dialog>

@@ -158,7 +158,7 @@ const HomePage = () => {
             </div>
             <div className='px-4 pb-4 flex justify-end'>
               <Link
-                to={`/product/${gift?._id}`}
+                to={`/products/${gift?._id}`}
                 className='text-sm font-medium text-purple-600 bg-purple-100 px-4 py-2 rounded-lg hover:bg-purple-600 hover:text-white transition-colors'
               >
                 View Details

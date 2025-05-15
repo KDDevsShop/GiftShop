@@ -128,7 +128,7 @@ function OrderPage() {
         if (response.redirectUrl) {
           window.location.href = response.redirectUrl;
         } else {
-          toast.success('Đặt hàng thành công!');
+          toast.success('Success!');
           navigate('/thankyou');
         }
       }

@@ -15,6 +15,7 @@ import addressRoute from './routes/address.route.js';
 import cartRoute from './routes/cart.route.js';
 import orderStatusRoute from './routes/orderStatus.route.js';
 import orderRoute from './routes/order.route.js';
+import statRoute from './routes/statistic.route.js';
 
 dotenv.config({ path: `${process.cwd()}/.env` });
 
@@ -42,6 +43,7 @@ app.use(`/api/address`, addressRoute);
 app.use(`/api/cart`, cartRoute);
 app.use(`/api/order-status`, orderStatusRoute);
 app.use(`/api/order`, orderRoute);
+app.use(`/api/stat`, statRoute);
 
 app.use('*', (_, res) => {
   res.status(404).json({

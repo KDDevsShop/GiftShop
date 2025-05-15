@@ -62,7 +62,7 @@ function AddressSection() {
         className='bg-purple-800 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded cursor-pointer'
         onClick={() => handleClickOpen()}
       >
-        + Thêm địa chỉ mới
+        + New address
       </button>
 
       <AddressFormDialog
@@ -72,7 +72,7 @@ function AddressSection() {
       />
 
       <div className='mt-6'>
-        <h2 className='text-xl font-semibold mb-4'>Danh sách địa chỉ</h2>
+        <h2 className='text-xl font-semibold mb-4'>Your address list</h2>
         {loading ? (
           <p>Loading...</p>
         ) : addresses.length > 0 ? (
@@ -115,7 +115,7 @@ function AddressSection() {
                           className='block mt-2 text-gray-600 border border-gray-300 py-1 px-2 rounded'
                           onClick={() => handleSetDefault(index)}
                         >
-                          Thiết lập mặc định
+                          Set as default
                         </button>
                       </>
                     )}
@@ -125,7 +125,7 @@ function AddressSection() {
             ))}
           </div>
         ) : (
-          <p>Chưa có địa chỉ nào.</p>
+          <p>You don't have any address here.</p>
         )}
       </div>
     </div>
