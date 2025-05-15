@@ -27,31 +27,37 @@ const Datatable = ({
     sortable: false,
     filterable: false,
     renderCell: (params) => (
-      <Stack direction="row" spacing={1}>
-        <Button
-          variant="outlined"
-          size="small"
-          color="primary"
-          onClick={() => onView && onView(params.row)}
-        >
-          View
-        </Button>
-        <Button
-          variant="outlined"
-          size="small"
-          color="warning"
-          onClick={() => onEdit && onEdit(params.row)}
-        >
-          Edit
-        </Button>
-        <Button
-          variant="outlined"
-          size="small"
-          color="error"
-          onClick={() => onDelete && onDelete(params.row)}
-        >
-          Delete
-        </Button>
+      <Stack direction="row" spacing={1} padding={1}>
+        {onView && (
+          <Button
+            variant="outlined"
+            size="small"
+            color="primary"
+            onClick={() => onView(params.row)}
+          >
+            View
+          </Button>
+        )}
+        {onEdit && (
+          <Button
+            variant="outlined"
+            size="small"
+            color="warning"
+            onClick={() => onEdit(params.row)}
+          >
+            Edit
+          </Button>
+        )}
+        {onDelete && (
+          <Button
+            variant="outlined"
+            size="small"
+            color="error"
+            onClick={() => onDelete(params.row)}
+          >
+            Delete
+          </Button>
+        )}
       </Stack>
     ),
   };
@@ -61,7 +67,16 @@ const Datatable = ({
       <Box sx={{ display: "flex", justifyContent: "space-between", mb: 2 }}>
         <Typography variant="h6">{title}</Typography>
         {onAdd && (
-          <Button variant="contained" color="primary" onClick={onAdd}>
+          <Button
+            variant="contained"
+            sx={{
+              backgroundColor: "#6a1b9a", // deep purple
+              "&:hover": {
+                backgroundColor: "#4a148c",
+              },
+            }}
+            onClick={onAdd}
+          >
             Add New
           </Button>
         )}
@@ -74,7 +89,7 @@ const Datatable = ({
       ) : error ? (
         <Typography color="error">{error}</Typography>
       ) : (
-        <div style={{ height: 500, width: "100%" }}>
+        <div style={{ height: 650, width: "100%" }}>
           <DataGrid
             rows={rows}
             columns={[...columns, actionColumn]}

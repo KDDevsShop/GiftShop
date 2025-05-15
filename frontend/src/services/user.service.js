@@ -1,8 +1,19 @@
-import ApiService from './api.service';
+import ApiService from "./api.service";
 
 class UserService {
   constructor() {
-    this.api = new ApiService('http://localhost:5000/api/users');
+    this.api = new ApiService("http://localhost:5000/api/users");
+  }
+
+  async getAllUsers(limit = 0) {
+    try {
+      const params = new URLSearchParams();
+      params.append("limit", limit);
+      return await this.api.get(`?${params.toString()}`);
+    } catch (error) {
+      console.error("Lỗi khi lấy thông tin tất cả người dùng: ", error);
+      throw error;
+    }
   }
 
   async getUserById(id) {
@@ -10,14 +21,14 @@ class UserService {
       const response = await this.api.get(`?id=${id}`);
       return response.data;
     } catch (error) {
-      throw new Error(error.response.data.error || 'Error fetching user data');
+      throw new Error(error.response.data.error || "Error fetching user data");
     }
   }
 
   async getLoggedInUser(accessToken) {
     try {
       // console.log(accessToken);
-      const response = await this.api.get('/current', {
+      const response = await this.api.get("/current", {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
@@ -26,14 +37,14 @@ class UserService {
       return response.data;
     } catch (error) {
       throw new Error(
-        error.response?.data?.error || 'Error fetching logged-in user data'
+        error.response?.data?.error || "Error fetching logged-in user data"
       );
     }
   }
 
   async updateUserInfo(updatedData, accessToken) {
     try {
-      const response = await this.api.put('/', updatedData, {
+      const response = await this.api.put("/", updatedData, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
@@ -41,39 +52,39 @@ class UserService {
       return response.data;
     } catch (error) {
       throw new Error(
-        error.response?.data?.error || 'Error updating user information'
+        error.response?.data?.error || "Error updating user information"
       );
     }
   }
 
   async updatePassword(updatedData, accessToken) {
     try {
-      const response = await this.api.put('/update-password', updatedData, {
+      const response = await this.api.put("/update-password", updatedData, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
       });
       return response.data;
     } catch (error) {
-      throw new Error(error.response?.data?.error || 'Error updating password');
+      throw new Error(error.response?.data?.error || "Error updating password");
     }
   }
 
   async changeAvatar(avatarFile, accessToken) {
     try {
       const formData = new FormData();
-      formData.append('avatarImagePath', avatarFile);
+      formData.append("avatarImagePath", avatarFile);
 
-      const response = await this.api.put('/update-avatar', formData, {
+      const response = await this.api.put("/update-avatar", formData, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
-          'Content-Type': 'multipart/form-data',
+          "Content-Type": "multipart/form-data",
         },
       });
 
       return response.data;
     } catch (error) {
-      throw new Error(error.response?.data?.error || 'Error changing avatar');
+      throw new Error(error.response?.data?.error || "Error changing avatar");
     }
   }
 }
