@@ -7,6 +7,7 @@ import {
   Settings,
   LogOut,
   GiftIcon,
+  ListOrderedIcon,
 } from "lucide-react";
 import authService from "../services/auth.service";
 
@@ -23,7 +24,11 @@ const navItems = [
     icon: <GiftIcon size={18} />,
     path: "/admin/products",
   },
-  { label: "Settings", icon: <Settings size={18} />, path: "/admin/settings" },
+  {
+    label: "Orders",
+    icon: <ListOrderedIcon size={18} />,
+    path: "/admin/orders",
+  },
 ];
 
 const Sidebar = () => {
