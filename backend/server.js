@@ -12,6 +12,7 @@ import userRoute from './routes/user.route.js';
 import productTypeRoute from './routes/productType.route.js';
 import productRoute from './routes/product.route.js';
 import addressRoute from './routes/address.route.js';
+import cartRoute from './routes/cart.route.js';
 import orderStatusRoute from './routes/orderStatus.route.js';
 import orderRoute from './routes/order.route.js';
 
@@ -38,6 +39,7 @@ app.use(`/api/users`, userRoute);
 app.use(`/api/product-types`, productTypeRoute);
 app.use(`/api/products`, productRoute);
 app.use(`/api/address`, addressRoute);
+app.use(`/api/cart`, cartRoute);
 app.use(`/api/order-status`, orderStatusRoute);
 app.use(`/api/order`, orderRoute);
 

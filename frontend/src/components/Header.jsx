@@ -1,5 +1,6 @@
 import React, { useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { FaCartShopping } from 'react-icons/fa6';
 
 const Header = () => {
   const navigate = useNavigate();
@@ -43,6 +44,11 @@ const Header = () => {
           {/* User Navigation */}
           {user ? (
             <>
+              <li>
+                <Link to={'/cart'}>
+                  <FaCartShopping />
+                </Link>
+              </li>
               <li>
                 <button
                   onClick={() => navigate('/me')}

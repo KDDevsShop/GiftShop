@@ -13,7 +13,7 @@ const router = express.Router();
 
 router.get('/', auth, getCartByUser);
 
-router.post('/', auth, addToCart);
+router.post('/add', auth, addToCart);
 
 router.delete('/', auth, deleteAllFromCart);
 

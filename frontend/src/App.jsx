@@ -12,6 +12,8 @@ import NotFoundPage from './pages/NotFoundPage';
 import UserInfo from './pages/client/UserInfo';
 import MBTITest from './pages/client/MBTITest';
 import ProductPage from './pages/client/ProductPage';
+import ProductDetail from './pages/client/ProductDetailPage';
+import CartPage from './pages/client/CartPage';
 
 function App() {
   return (
@@ -54,6 +56,27 @@ function App() {
             <CustomerLayout>
               <ProtectedRoute allowedRoles={['customer', 'admin']}>
                 <ProductPage />
+              </ProtectedRoute>
+            </CustomerLayout>
+          }
+        />
+        <Route
+          path='/product/:id'
+          element={
+            <CustomerLayout>
+              <ProtectedRoute allowedRoles={['customer', 'admin']}>
+                <ProductDetail />
+              </ProtectedRoute>
+            </CustomerLayout>
+          }
+        />
+
+        <Route
+          path='/cart'
+          element={
+            <CustomerLayout>
+              <ProtectedRoute allowedRoles={['customer', 'admin']}>
+                <CartPage />
               </ProtectedRoute>
             </CustomerLayout>
           }

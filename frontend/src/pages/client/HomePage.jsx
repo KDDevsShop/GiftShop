@@ -132,31 +132,6 @@ const HomePage = () => {
         </div>
       </section>
 
-      {/* Search and Categories */}
-      {/* <section className='mb-16'>
-        <div className='flex items-center mb-6'>
-          <input
-            type='text'
-            placeholder='Search for gifts...'
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className='flex-grow py-2 px-4 border-2 border-gray-300 rounded-l-lg focus:outline-none'
-          />
-          <button className='bg-purple-600 text-white py-2 px-4 rounded-r-lg flex items-center gap-2 cursor-pointer'>
-            <SearchIcon /> Search
-          </button>
-        </div>
-        <div className='flex flex-wrap gap-2 mb-8'>
-          {categories.map((category, index) => (
-            <Chip
-              key={index}
-              label={category}
-              className='cursor-pointer bg-gray-100 hover:bg-gray-200'
-            />
-          ))}
-        </div>
-      </section> */}
-
       {/* Gift Cards */}
       <section className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8'>
         {gifts?.map((gift) => (
@@ -183,7 +158,7 @@ const HomePage = () => {
             </div>
             <div className='px-4 pb-4 flex justify-end'>
               <Link
-                to={`/gift/${gift?._id}`}
+                to={`/product/${gift?._id}`}
                 className='text-sm font-medium text-purple-600 bg-purple-100 px-4 py-2 rounded-lg hover:bg-purple-600 hover:text-white transition-colors'
               >
                 View Details

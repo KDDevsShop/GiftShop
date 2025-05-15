@@ -1,8 +1,8 @@
-import { Cart } from '../models/cart.model.js';
-import { CartDetail } from '../models/cartDetail.model.js';
+import { Cart, CartDetail } from '../models/cart.model.js';
 import { Product } from '../models/product.model.js';
 import { isValidObjectId } from '../utils/isValidObjectId.js';
 import { getTotalPrice, getTotalItems } from '../utils/cartCalculations.js';
+import { ValidationError } from '../utils/Error.js';
 
 class CartService {
   async getCartByUser(userId) {
@@ -16,7 +16,7 @@ class CartService {
         populate: {
           path: 'product',
           model: 'Product',
-          select: 'productName discountedPrice productImagePath',
+          select: 'productName price productImagePath',
         },
         select: 'quantity itemPrice',
       })
@@ -35,7 +35,7 @@ class CartService {
 
   async addToCart(userId, productId, quantity) {
     if (!isValidObjectId(userId) || !isValidObjectId(productId)) {
-      throw new Error('Invalid Id');
+      throw new ValidationError('Invalid Id');
     }
 
     if (quantity <= 0) {
@@ -62,7 +62,7 @@ class CartService {
       const newCartItem = new CartDetail({
         product: productId,
         quantity,
-        itemPrice: product.discountedPrice * quantity,
+        itemPrice: product.price * quantity,
       });
 
       await newCartItem.save();
@@ -70,7 +70,7 @@ class CartService {
     } else {
       const existingCartItem = cart.cartItems[productIndex];
       existingCartItem.quantity += quantity;
-      existingCartItem.itemPrice += product.discountedPrice * quantity;
+      existingCartItem.itemPrice += product.price * quantity;
       await existingCartItem.save();
     }
 
@@ -173,7 +173,7 @@ class CartService {
     const cartDetail = await CartDetail.findById(cartDetailId).populate({
       path: 'product',
       model: 'Product',
-      select: 'productName discountedPrice productImagePath',
+      select: 'productName price productImagePath',
     });
 
     if (!cartDetail) {
