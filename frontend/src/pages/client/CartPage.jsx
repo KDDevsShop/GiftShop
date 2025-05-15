@@ -14,19 +14,6 @@ const CartPage = () => {
   const accessToken = localStorage.getItem('accessToken');
   const navigate = useNavigate();
 
-  const [selectedItems, setSelectedItems] = useState([]);
-  const handleSelectAll = () => {
-    if (allItemsSelected) {
-      setSelectedItems([]);
-    } else {
-      const allIds = cartItems.map((item) => item._id);
-      setSelectedItems(allIds);
-    }
-  };
-
-  const allItemsSelected =
-    cartItems.length > 0 && selectedItems.length === cartItems.length;
-
   const fetchCart = useCallback(async () => {
     const response = await cartService.getCartByUser(accessToken);
     setCart(response);
@@ -65,25 +52,15 @@ const CartPage = () => {
     }
   };
 
-  const handleCheckboxChange = (id) => {
-    setSelectedItems((prevSelectedItems) =>
-      prevSelectedItems.includes(id)
-        ? prevSelectedItems.filter((itemId) => itemId !== id)
-        : [...prevSelectedItems, id]
-    );
-  };
-
   const calculateTotal = () => {
-    return cartItems
-      .filter((item) => selectedItems.includes(item._id))
-      .reduce(
-        (total, item) =>
-          total +
-          item.itemPrice *
-            ((100 - item.product.discount?.discountPercent) / 100) *
-            item.quantity,
-        0
-      );
+    return cartItems.reduce(
+      (total, item) =>
+        total +
+        item.itemPrice *
+          ((100 - item.product.discount?.discountPercent) / 100) *
+          item.quantity,
+      0
+    );
   };
 
   return (
@@ -105,7 +82,6 @@ const CartPage = () => {
               <table className='w-full bg-white rounded-lg shadow text-sm sm:text-base'>
                 <thead className='bg-primary'>
                   <tr className='border-b text-white'>
-                    <th className='text-left py-2 px-4'>Chọn</th>
                     <th className='text-left py-2 px-4'>Sản phẩm</th>
                     <th className='text-center py-2 px-4'>Số lượng</th>
                     <th className='text-right py-2 px-4'>Tổng giá</th>
@@ -115,14 +91,6 @@ const CartPage = () => {
                 <tbody>
                   {cartItems.map((item) => (
                     <tr key={item._id} className='border-b'>
-                      <td className='text-center py-2 px-4'>
-                        <input
-                          type='checkbox'
-                          checked={selectedItems.includes(item._id)}
-                          onChange={() => handleCheckboxChange(item._id)}
-                          className='form-checkbox h-5 w-5 text-blue-600 transition duration-150 ease-in-out'
-                        />
-                      </td>
                       <td className='flex items-center py-2 px-4'>
                         <img
                           // src={item.product.productImagePath?.[0] || ''}
@@ -166,10 +134,6 @@ const CartPage = () => {
                         </button>
                       </td>
                       <td className='text-right py-2 px-4 text-primary font-semibold'>
-                        {/* {item.itemPrice.toLocaleString('vi-VN', {
-                          style: 'currency',
-                          currency: 'VND',
-                        })} */}
                         {ToVietnamCurrencyFormat(item.itemPrice)}
                       </td>
                       <td className='text-center py-2 px-4'>
@@ -195,12 +159,6 @@ const CartPage = () => {
                 >
                   {/* Product Image */}
                   <div className='flex items-center mb-4'>
-                    <input
-                      type='checkbox'
-                      checked={selectedItems.includes(item._id)}
-                      onChange={() => handleCheckboxChange(item._id)}
-                      className='form-checkbox h-5 w-5 text-blue-600 transition duration-150 ease-in-out mr-4'
-                    />
                     <img
                       src={item.product?.productImagePath?.[0] || ''}
                       alt={item.product.productName}
@@ -248,20 +206,6 @@ const CartPage = () => {
                   </div>
                 </div>
               ))}
-            </div>
-            <div className='container mx-auto p-4'>
-              <label className='flex items-center space-x-2'>
-                <input
-                  type='checkbox'
-                  checked={allItemsSelected}
-                  onChange={handleSelectAll}
-                  className='form-checkbox h-5 w-5 text-blue-600 transition duration-150 ease-in-out'
-                />
-                <span className='text-sm font-semibold'>
-                  Chọn tất cả ({cartItems.length})
-                </span>
-              </label>
-              {/* Other cart page content */}
             </div>
 
             {/* Total Price and Order Button */}

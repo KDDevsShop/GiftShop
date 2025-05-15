@@ -96,7 +96,7 @@ function App() {
         />
 
         <Route
-          path='admin/products'
+          path='/admin/products'
           element={
             <AdminLayout>
               <ProtectedRoute allowedRoles={['admin']}>
@@ -107,7 +107,7 @@ function App() {
         />
 
         <Route
-          path='admin/users'
+          path='/admin/users'
           element={
             <AdminLayout>
               <ProtectedRoute allowedRoles={['admin']}>
