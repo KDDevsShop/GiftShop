@@ -1,4 +1,5 @@
 import { Product, ProductType } from '../models/product.model.js';
+import { NotFoundError } from '../utils/Error.js';
 import { isValidObjectId } from '../utils/isValidObjectId.js';
 
 class ProductService {
@@ -101,7 +102,7 @@ class ProductService {
       'productTypeName'
     );
     if (!product) {
-      throw new Error('Product not found');
+      throw new NotFoundError('Product not found');
     }
 
     return product;

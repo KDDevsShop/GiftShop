@@ -13,7 +13,7 @@ const router = express.Router();
 
 // 🔄 Order Routes
 router.post('/', auth, createOrder);
-router.get('/', auth, getAllOrders);
+router.get('/', getAllOrders);
 router.get('/user', auth, getOrderByUser);
 router.get('/latest', auth, getLastOrders);
 router.get('/:id', auth, getOrderById);

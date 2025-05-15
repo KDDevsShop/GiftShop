@@ -5,6 +5,7 @@ import { NotFoundError, ValidationError } from '../utils/Error.js';
 export const createOrderService = async (
   userId,
   orderDetail,
+  totalPrice,
   shippingAddress
 ) => {
   if (!userId || !isValidObjectId(userId))
@@ -13,7 +14,12 @@ export const createOrderService = async (
   if (!Array.isArray(orderDetail) || orderDetail.length === 0)
     throw new ValidationError('Cannot create order without products');
 
-  const newOrder = new Order({ user: userId, orderDetail, shippingAddress });
+  const newOrder = new Order({
+    user: userId,
+    orderDetail,
+    totalPrice,
+    shippingAddress,
+  });
   const savedOrder = await newOrder.save();
 
   return {
@@ -49,14 +55,18 @@ export const getAllOrdersService = async ({
     .populate('shippingAddress', '-isDefault')
     .populate({
       path: 'orderDetail',
+      model: 'CartDetail',
       populate: {
         path: 'product',
+        model: 'Product',
         select: 'productName productImagePath',
       },
     })
     .populate('orderStatus')
     .skip((pageNumber - 1) * limitNumber)
     .limit(limitNumber);
+
+  console.log(orders[1]);
 
   const totalDocs = await Order.countDocuments(query);
   const totalPages = Math.ceil(totalDocs / limitNumber);

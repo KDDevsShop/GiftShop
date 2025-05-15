@@ -153,6 +153,10 @@ const ProductDetail = () => {
     }
   }, [user, product.countInStock, accessToken, id, quantity]);
 
+  const fetchCart = useCallback(async () => {
+    return await cartService.getCartByUser(accessToken);
+  }, [accessToken]);
+
   const handleBuyNow = useCallback(async () => {
     if (!user) {
       toast.error('Please log in to make a purchase');
@@ -165,18 +169,29 @@ const ProductDetail = () => {
     }
 
     try {
-      await cartService.addToCart({
-        productId: product._id,
+      await cartService.addToCart(accessToken, {
+        productId: id,
         quantity: quantity,
       });
-
-      toast.success('Proceeding to checkout');
+      const cart = await fetchCart();
+      sessionStorage.setItem(
+        'selectedProductIds',
+        JSON.stringify(cart?.cart?.cartItems)
+      );
       navigate('/order');
     } catch (error) {
       toast.error('Failed to process your order. Please try again.');
       console.error('Buy now error:', error);
     }
-  }, [product._id, product.countInStock, quantity, user, navigate]);
+  }, [
+    user,
+    product.countInStock,
+    accessToken,
+    id,
+    quantity,
+    fetchCart,
+    navigate,
+  ]);
 
   // Show loading state
   if (loading) {

@@ -2,8 +2,6 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import DeleteForeverSharpIcon from '@mui/icons-material/DeleteForeverSharp';
 
-import { toast } from 'react-toastify';
-
 import CustomBreedCrumb from '../../components/CustomBreedCrumb';
 import { ToVietnamCurrencyFormat } from '../../utils/ToVietnamCurrencyFormat';
 import cartService from '../../services/cart.service';
@@ -21,27 +19,23 @@ const CartPage = () => {
   }, [accessToken]);
 
   useEffect(() => {
-    // dispatch(getCartByUser(accessToken));
     fetchCart();
   }, [accessToken, fetchCart]);
 
   const breadcrumbs = [
-    { label: 'Trang chủ', href: '/' },
-    { label: 'Giỏ hàng', href: '/cart' },
+    { label: 'Home', href: '/' },
+    { label: 'Cart', href: '/cart' },
   ];
 
-  const handleRemove = (id) => {
-    // dispatch(
-    //   deleteItem({
-    //     accessToken: accessToken,
-    //     id: id,
-    //   })
-    // );
+  const handleRemove = async (id) => {
+    await cartService.deleteItem(accessToken, id);
+    fetchCart();
   };
 
-  const handleQuantityChange = (id, delta) => {
+  const handleQuantityChange = async (id, delta) => {
     if (delta <= 0) {
       handleRemove(id); // Xóa sản phẩm nếu số lượng bằng 0
+      fetchCart();
     } else {
       //   dispatch(
       //     updateQuantity({
@@ -49,18 +43,17 @@ const CartPage = () => {
       //       data: { productId: id, quantity: delta },
       //     })
       //   );
+      await cartService.updateQuantity(accessToken, {
+        productId: id,
+        quantity: delta,
+      });
+      fetchCart();
     }
   };
 
-  const calculateTotal = () => {
-    return cartItems.reduce(
-      (total, item) =>
-        total +
-        item.itemPrice *
-          ((100 - item.product.discount?.discountPercent) / 100) *
-          item.quantity,
-      0
-    );
+  const handleOrderNow = () => {
+    sessionStorage.setItem('selectedProductIds', JSON.stringify(cartItems));
+    setTimeout(() => navigate('/order'), 1000);
   };
 
   return (
@@ -68,23 +61,23 @@ const CartPage = () => {
       <CustomBreedCrumb breadcrumbs={breadcrumbs} />
       <div className='container mx-auto px-4 py-5'>
         <div className='flex items-center justify-between mb-4'>
-          <h2 className='text-2xl font-bold'>Giỏ hàng của bạn</h2>
+          <h2 className='text-2xl font-bold'>Your cart</h2>
         </div>
         {cartItems.length === 0 ? (
           <div className='flex flex-col items-center'>
             <p className='text-center text-sm sm:text-lg text-gray-500'>
-              Không có sản phẩm nào trong giỏ hàng của bạn
+              There's no products in your cart
             </p>
           </div>
         ) : (
           <>
             <div className='hidden lg:block'>
               <table className='w-full bg-white rounded-lg shadow text-sm sm:text-base'>
-                <thead className='bg-primary'>
+                <thead className='bg-purple-800'>
                   <tr className='border-b text-white'>
-                    <th className='text-left py-2 px-4'>Sản phẩm</th>
-                    <th className='text-center py-2 px-4'>Số lượng</th>
-                    <th className='text-right py-2 px-4'>Tổng giá</th>
+                    <th className='text-left py-2 px-4'>Product</th>
+                    <th className='text-center py-2 px-4'>Quantity</th>
+                    <th className='text-right py-2 px-4'>Price</th>
                     <th className='text-center py-2 px-4'></th>
                   </tr>
                 </thead>
@@ -107,8 +100,8 @@ const CartPage = () => {
                           className='w-16 h-16 sm:w-20 sm:h-20 object-cover rounded mr-4'
                         />
                         <div>
-                          <Link to={`/products/detail/${item.product._id}`}>
-                            <p className='font-medium text-gray-900 hover:text-primary transition duration-150'>
+                          <Link to={`/products/${item.product._id}`}>
+                            <p className='font-medium text-gray-900 hover:text-purple-800 transition duration-150'>
                               {item.product.productName}
                             </p>
                           </Link>
@@ -133,13 +126,13 @@ const CartPage = () => {
                           <span>+</span>
                         </button>
                       </td>
-                      <td className='text-right py-2 px-4 text-primary font-semibold'>
-                        {ToVietnamCurrencyFormat(item.itemPrice)}
+                      <td className='text-right py-2 px-4 text-purple-800 font-semibold'>
+                        $ {item.itemPrice}
                       </td>
                       <td className='text-center py-2 px-4'>
                         <button
                           onClick={() => handleRemove(item._id)}
-                          className='text-primary hover:text-hover-primary transition duration-150'
+                          className='text-red-600 hover:text-hover-purple-800 transition duration-150'
                         >
                           <DeleteForeverSharpIcon />
                         </button>
@@ -194,12 +187,12 @@ const CartPage = () => {
                         <span>+</span>
                       </button>
                     </div>
-                    <p className='text-primary font-semibold'>
+                    <p className='text-purple-800 font-semibold'>
                       {ToVietnamCurrencyFormat(item.itemPrice)}
                     </p>
                     <button
                       onClick={() => handleRemove(item._id)}
-                      className='text-primary hover:text-hover-primary transition duration-150'
+                      className='text-purple-800 hover:text-hover-purple-800 transition duration-150'
                     >
                       <DeleteForeverSharpIcon />
                     </button>
@@ -211,16 +204,14 @@ const CartPage = () => {
             {/* Total Price and Order Button */}
             <div className='flex flex-col items-end mt-6'>
               <div className='text-lg sm:text-xl font-semibold mb-4'>
-                Tổng cộng:{' '}
-                <span className='text-primary'>
-                  {ToVietnamCurrencyFormat(calculateTotal())}
-                </span>
+                Total:{' '}
+                <span className='text-purple-800'>$ {cart?.totalPrice}</span>
               </div>
               <button
-                // onClick={handleOrderNow}
-                className='bg-primary hover:bg-hover-primary text-white font-semibold py-2 px-4 sm:py-3 sm:px-6 rounded transition duration-150'
+                onClick={handleOrderNow}
+                className='bg-purple-800 hover:bg-hover-purple-800 text-white font-semibold py-2 px-4 sm:py-3 sm:px-6 rounded transition duration-150 cursor-pointer hover:bg-purple-700'
               >
-                Đặt hàng ngay
+                Order Now
               </button>
             </div>
           </>

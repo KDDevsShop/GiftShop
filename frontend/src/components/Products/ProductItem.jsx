@@ -8,7 +8,7 @@ const ProductItem = ({ product }) => {
   return (
     <div className='bg-white rounded-2xl shadow-md overflow-hidden transition-transform hover:scale-105'>
       <div className='flex justify-center items-center w-full h-48 md:h-64 lg:h-72 overflow-hidden'>
-        <Link to={`/product/${product?._id}`}>
+        <Link to={`/products/${product?._id}`}>
           <img
             src={
               product?.productImagePath && product?.productImagePath?.length > 0
@@ -25,7 +25,7 @@ const ProductItem = ({ product }) => {
       </div>
 
       <div className='p-4 flex flex-col justify-between h-40'>
-        <Link to={`/product/${product?._id}`}>
+        <Link to={`/products/${product?._id}`}>
           <h3 className='text-base md:text-lg text-gray-900 font-semibold mb-2 line-clamp-2'>
             {product?.productName}
           </h3>

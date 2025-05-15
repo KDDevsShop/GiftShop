@@ -19,8 +19,8 @@ router.delete('/', auth, deleteAllFromCart);
 
 router.delete('/:id', auth, deleteFromCart);
 
-router.put('/quantity', auth, changeItemQuantity);
+router.put('/update-quantity', auth, changeItemQuantity);
 
-router.get('/:id', auth, getCartDetail);
+router.get('/cart-detail/:id', auth, getCartDetail);
 
 export default router;

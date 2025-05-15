@@ -2,7 +2,7 @@ import { Cart, CartDetail } from '../models/cart.model.js';
 import { Product } from '../models/product.model.js';
 import { isValidObjectId } from '../utils/isValidObjectId.js';
 import { getTotalPrice, getTotalItems } from '../utils/cartCalculations.js';
-import { ValidationError } from '../utils/Error.js';
+import { NotFoundError, ValidationError } from '../utils/Error.js';
 
 class CartService {
   async getCartByUser(userId) {
@@ -141,19 +141,30 @@ class CartService {
       throw new Error('Cart not found');
     }
 
-    const cartItem = cart.cartItems.find((item) => item.equals(productId));
+    // Find the cart item
+    const cartItemId = cart.cartItems.find((item) => item.equals(productId));
+
+    if (!cartItemId) {
+      throw new Error('Product not found in cart');
+    }
+
+    // Fetch the full CartDetail document
+    const cartItem = await CartDetail.findById(cartItemId);
 
     if (!cartItem) {
       throw new Error('Product not found in cart');
     }
 
     if (quantity === 0) {
-      await CartDetail.findByIdAndDelete(productId);
-      cart.cartItems.pull(productId);
+      // Remove the cart item completely if the quantity is 0
+      await CartDetail.findByIdAndDelete(cartItemId);
+      cart.cartItems.pull(cartItemId);
     } else {
+      // Update the quantity and item price
+      const pricePerUnit = cartItem.itemPrice / cartItem.quantity;
       cartItem.quantity = quantity;
-      cartItem.itemPrice = (cartItem.itemPrice / cartItem.quantity) * quantity;
-      await cartItem.save();
+      cartItem.itemPrice = pricePerUnit * quantity;
+      await cartItem.save(); // Now this works because cartItem is a full model instance
     }
 
     await cart.save();
@@ -177,7 +188,7 @@ class CartService {
     });
 
     if (!cartDetail) {
-      throw new Error('Cart detail not found');
+      throw new NotFoundError('Cart detail not found');
     }
 
     return cartDetail;
