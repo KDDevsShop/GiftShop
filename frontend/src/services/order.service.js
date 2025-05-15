@@ -30,7 +30,7 @@ class OrderService {
 
     try {
       const accessToken = localStorage.getItem("accessToken");
-      const response = await this.api.get("/get-order-by-user", {
+      const response = await this.api.get("/user", {
         params: params,
         headers: {
           Authorization: `Bearer ${accessToken}`,

@@ -1,6 +1,6 @@
-import { Product, ProductType } from '../models/product.model.js';
-import { NotFoundError } from '../utils/Error.js';
-import { isValidObjectId } from '../utils/isValidObjectId.js';
+import { Product, ProductType } from "../models/product.model.js";
+import { NotFoundError, ValidationError } from "../utils/Error.js";
+import { isValidObjectId } from "../utils/isValidObjectId.js";
 
 class ProductService {
   // Create a new product
@@ -9,18 +9,18 @@ class ProductService {
       productData;
 
     if (!productName || !countInStock || !price || !description) {
-      throw new Error('Missing required fields!');
+      throw new Error("Missing required fields!");
     }
 
     if (productType && !isValidObjectId(productType)) {
-      throw new Error('Invalid Product Type ID');
+      throw new Error("Invalid Product Type ID");
     }
 
     // Check if the product type exists
     if (productType) {
       const existingType = await ProductType.findById(productType);
       if (!existingType) {
-        throw new Error('Product type not found');
+        throw new Error("Product type not found");
       }
     }
 
@@ -37,7 +37,7 @@ class ProductService {
       traits,
       mbti,
       searchString,
-      sortBy = 'createdAt',
+      sortBy = "createdAt",
       isDesc = false,
     } = query;
 
@@ -45,13 +45,13 @@ class ProductService {
 
     // Partial Traits Match (OR logic)
     if (traits) {
-      const traitList = Array.isArray(traits) ? traits : traits.split(',');
+      const traitList = Array.isArray(traits) ? traits : traits.split(",");
       filters.push({ traits: { $in: traitList } });
     }
 
     // MBTI (OR logic)
     if (mbti) {
-      const recommendedTypeList = Array.isArray(mbti) ? mbti : mbti.split(',');
+      const recommendedTypeList = Array.isArray(mbti) ? mbti : mbti.split(",");
       filters.push({ recommendedTypes: { $in: recommendedTypeList } });
     }
 
@@ -64,14 +64,14 @@ class ProductService {
     const finalFilter = filters.length > 0 ? { $or: filters } : {};
 
     // Sorting
-    const sortDirection = isDesc === 'true' ? -1 : 1;
+    const sortDirection = isDesc === "true" ? -1 : 1;
     const sortOptions = { [sortBy]: sortDirection };
 
     // Fetch Products
     const products = await Product.find(finalFilter)
       .populate({
-        path: 'productType',
-        select: 'productTypeName',
+        path: "productType",
+        select: "productTypeName",
       })
       .skip((page - 1) * limit)
       .limit(parseInt(limit))
@@ -94,15 +94,15 @@ class ProductService {
   // Get a single product by ID
   async getProductById(productId) {
     if (!isValidObjectId(productId)) {
-      throw new Error('Invalid Product ID');
+      throw new ValidationError("Invalid Product ID");
     }
 
     const product = await Product.findById(productId).populate(
-      'productType',
-      'productTypeName'
+      "productType",
+      "productTypeName"
     );
     if (!product) {
-      throw new NotFoundError('Product not found');
+      throw new NotFoundError("Product not found");
     }
 
     return product;
@@ -111,7 +111,7 @@ class ProductService {
   // Update product details
   async updateProduct(productId, updatedData) {
     if (!isValidObjectId(productId)) {
-      throw new Error('Invalid Product ID');
+      throw new Error("Invalid Product ID");
     }
 
     const updatedProduct = await Product.findByIdAndUpdate(
@@ -121,10 +121,10 @@ class ProductService {
         new: true,
         runValidators: true,
       }
-    ).populate('productType', 'productTypeName');
+    ).populate("productType", "productTypeName");
 
     if (!updatedProduct) {
-      throw new Error('Product not found');
+      throw new Error("Product not found");
     }
 
     return updatedProduct;
@@ -133,16 +133,16 @@ class ProductService {
   // Delete a product
   async deleteProduct(productId) {
     if (!isValidObjectId(productId)) {
-      throw new Error('Invalid Product ID');
+      throw new Error("Invalid Product ID");
     }
 
     const deletedProduct = await Product.findByIdAndDelete(productId);
 
     if (!deletedProduct) {
-      throw new Error('Product not found');
+      throw new Error("Product not found");
     }
 
-    return { message: 'Product deleted successfully' };
+    return { message: "Product deleted successfully" };
   }
 }
 

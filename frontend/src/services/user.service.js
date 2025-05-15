@@ -73,9 +73,9 @@ class UserService {
   async changeAvatar(avatarFile, accessToken) {
     try {
       const formData = new FormData();
-      formData.append("avatarImagePath", avatarFile);
+      formData.append("avatar", avatarFile);
 
-      const response = await this.api.put("/update-avatar", formData, {
+      const response = await this.api.put("/avatar", formData, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
           "Content-Type": "multipart/form-data",
