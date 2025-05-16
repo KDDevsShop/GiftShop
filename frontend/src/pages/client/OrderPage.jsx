@@ -22,6 +22,8 @@ function OrderPage() {
     address: '',
     email: '',
     notes: '',
+    deliveryMethod: 'Standard',
+    paymentMethod: 'COD',
   });
   const [selectedAddress, setSelectedAddress] = useState({});
   const [isLoading, setIsLoading] = useState(false);
@@ -33,7 +35,6 @@ function OrderPage() {
     () => JSON.parse(sessionStorage.getItem('selectedProductIds') || []),
     []
   );
-  console.log('productIds: ', selectedProductIds);
 
   const [productItems, setProductItems] = useState([]);
 
@@ -60,8 +61,6 @@ function OrderPage() {
     fetchCartDetail();
   }, [accessToken, selectedProductIds]);
 
-  console.log(productItems);
-
   const fetchUserAddress = useCallback(async () => {
     const response = await addressService.getUserAddress(accessToken);
     setAddresses(response);
@@ -80,7 +79,9 @@ function OrderPage() {
         fullname: defaultAddress?.fullname || '',
         phone: defaultAddress?.phone || '',
         address: defaultAddress
-          ? `${defaultAddress.detail}, ${defaultAddress.commune}, ${defaultAddress.district}, ${defaultAddress.province}`
+          ? `${selectedAddress.detail ? selectedAddress.detail + ', ' : ''}${
+              selectedAddress.commune
+            }, ${selectedAddress.district}, ${selectedAddress.province}`
           : '',
         email: user.email || '',
         notes: '',
@@ -99,7 +100,11 @@ function OrderPage() {
     if (selectedAddress) {
       setFormData({
         ...formData,
-        address: `${selectedAddress.detail}, ${selectedAddress.commune}, ${selectedAddress.district}, ${selectedAddress.province}`,
+        address: `${
+          selectedAddress.detail ? selectedAddress.detail + ', ' : ''
+        }${selectedAddress.commune}, ${selectedAddress.district}, ${
+          selectedAddress.province
+        }`,
         fullname: selectedAddress.fullname || formData.fullname,
         phone: selectedAddress.phone || formData.phone,
       });
@@ -108,11 +113,11 @@ function OrderPage() {
   };
 
   const handleSubmit = async () => {
-    const { fullname, phone, address, email } = formData;
+    const { fullname, phone, address, email, deliveryMethod, paymentMethod } =
+      formData;
 
-    // Kiểm tra nếu các trường cần thiết (trừ 'notes') không được điền
     if (!fullname || !phone || !address || !email) {
-      toast.error('Vui lòng nhập đầy đủ thông tin.');
+      toast.error('Please fill in all required fields.');
       return;
     }
 
@@ -120,21 +125,28 @@ function OrderPage() {
       orderDetail: selectedProductIds,
       totalPrice: calculateTotal(),
       shippingAddress: selectedAddress._id,
+      deliveryMethod,
+      paymentMethod,
     };
+
     try {
       setIsLoading(true);
       const response = await orderService.createOrder(order);
+
       if (response) {
         if (response.redirectUrl) {
           window.location.href = response.redirectUrl;
         } else {
           toast.success('Success!');
-          navigate('/thankyou');
+          setTimeout(() => navigate('/thankyou'), 1500);
         }
       }
       //   dispatch(getCartByUser(localStorage.getItem('accessToken')));
     } catch (error) {
       console.error(error.message);
+      toast.error(
+        `${error.message || error || 'An error occur. Please try again!'}`
+      );
     } finally {
       setIsLoading(false);
     }
@@ -174,7 +186,7 @@ function OrderPage() {
           <div className='grid grid-cols-1 lg:grid-cols-5 gap-6'>
             {/* Thông tin liên hệ và giao hàng */}
             <div className='bg-white shadow-lg rounded-lg p-6 lg:col-span-2'>
-              <h2 className='text-lg font-semibold text-gray-900'>
+              <h2 className='text-xl font-semibold text-gray-900'>
                 Order Information
               </h2>
               <div className='mt-4'>
@@ -229,13 +241,48 @@ function OrderPage() {
                   rows='4'
                 />
               </div>
+
+              <div className='mt-6 grid md:grid-cols-2 sm:grid-cols-1 gap-4'>
+                <div>
+                  <h2 className='sm:text-md md:text-md font-semibold text-gray-900'>
+                    Choose a delivery method:
+                  </h2>
+                  <div>
+                    <select
+                      name='deliveryMethod'
+                      value={formData.deliveryMethod}
+                      onChange={handleChange}
+                      className='w-full mt-4 p-3 border border-gray-300 rounded-md'
+                    >
+                      <option value='Standard'>Standard</option>
+                      <option value='Express'>Express</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div>
+                  <h2 className='sm:text-md md:text-md font-semibold text-gray-900'>
+                    Choose a payment method:
+                  </h2>
+                  <div>
+                    <select
+                      name='paymentMethod'
+                      value={formData.paymentMethod}
+                      onChange={handleChange}
+                      className='w-full mt-4 p-3 border border-gray-300 rounded-md'
+                    >
+                      <option value='COD'>COD</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
             </div>
 
             {/* Tóm tắt đơn hàng */}
             <div className='bg-white shadow-lg rounded-lg p-6 lg:col-span-3'>
-              <div className='border-t'>
+              <div>
                 {/* chi tiet don hang */}
-                <h2 className='text-lg font-semibold text-gray-900 mt-4'>
+                <h2 className='text-2xl font-semibold text-gray-900 mt-4'>
                   Order Detail
                 </h2>
                 <div className='mt-4'>
@@ -271,14 +318,14 @@ function OrderPage() {
                 </div>
 
                 {/* tong gia */}
-                <div className=' border-t border-gray-200 '>
+                <div className='border-t mt-6 pt-4 border-gray-200 '>
                   <div className='flex justify-between'>
                     <span className='text-gray-500'>Total:</span>
                     <span className='text-gray-900'>$ {calculateTotal()}</span>
                   </div>
                 </div>
 
-                <div className='flex justify-between mt-6'>
+                <div className='flex justify-between mt-10'>
                   <button
                     className='w-1/2 mr-2 font-semibold bg-gray-300 text-gray-700 py-3 rounded-md lg:text-lg text-sm hover:bg-gray-400'
                     onClick={() => navigate(-1)}

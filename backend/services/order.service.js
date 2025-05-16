@@ -6,7 +6,9 @@ export const createOrderService = async (
   userId,
   orderDetail,
   totalPrice,
-  shippingAddress
+  shippingAddress,
+  deliveryMethod = 'Standard',
+  paymentMethod = 'COD'
 ) => {
   if (!userId || !isValidObjectId(userId))
     throw new ValidationError('Invalid user id');
@@ -19,7 +21,10 @@ export const createOrderService = async (
     orderDetail,
     totalPrice,
     shippingAddress,
+    deliveryMethod,
+    paymentMethod,
   });
+
   const savedOrder = await newOrder.save();
 
   return {

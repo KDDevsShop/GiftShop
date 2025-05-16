@@ -1,10 +1,8 @@
-import React from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import {
   LayoutDashboard,
   Users,
   Package,
-  Settings,
   LogOut,
   GiftIcon,
   ListOrderedIcon,
@@ -36,11 +34,15 @@ const navItems = [
 ];
 
 const Sidebar = () => {
-  const naviagte = useNavigate();
   const location = useLocation();
 
   const handleLogout = () => {
-    authService.logout().then(() => naviagte('/'));
+    authService.logout().then(() => {
+      localStorage.removeItem('accessToken');
+      localStorage.removeItem('refreshToken');
+      localStorage.removeItem('user');
+      window.location.href = '/';
+    });
   };
 
   return (

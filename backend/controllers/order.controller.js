@@ -11,13 +11,21 @@ import {
 export const createOrder = async (req, res) => {
   try {
     const { userId } = req.userId;
-    const { orderDetail, totalPrice, shippingAddress } = req.body;
+    const {
+      orderDetail,
+      totalPrice,
+      shippingAddress,
+      deliveryMethod = 'Standard',
+      paymentMethod = 'COD',
+    } = req.body;
 
     const createdOrder = await createOrderService(
       userId,
       orderDetail,
       totalPrice,
-      shippingAddress
+      shippingAddress,
+      deliveryMethod,
+      paymentMethod
     );
     res.status(createdOrder.status).json(createdOrder);
   } catch (error) {
@@ -37,6 +45,7 @@ export const getAllOrders = async (req, res) => {
 export const getOrderByUser = async (req, res) => {
   try {
     const { userId } = req.userId;
+    console.log(req.query);
     const orders = await getOrderByUserService(userId, req.query);
     res.status(200).json(orders);
   } catch (error) {

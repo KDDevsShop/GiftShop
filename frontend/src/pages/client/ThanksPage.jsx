@@ -18,12 +18,12 @@ const ThankYouPage = () => {
         </p>
 
         <div className='grid grid-cols-1 md:grid-cols-2 gap-4 mt-6'>
-          {/* <Link
-            to='/profile?tab=orders'
+          <Link
+            to='/me?tab=orders'
             className='bg-purple-800 hover:bg-purple-700 text-white py-3 px-5 rounded-lg shadow-md transition duration-300 ease-in-out'
           >
             View order history
-          </Link> */}
+          </Link>
           <Link
             to='/'
             className='bg-gray-500 hover:bg-gray-600 text-white py-3 px-5 rounded-lg shadow-md transition duration-300 ease-in-out'

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
@@ -141,10 +141,10 @@ const HomePage = () => {
           statictisService.getTotalUsersByDate(startDate, endDate),
         ]);
 
-        console.log(revenueResponse.data);
+        console.log(allRevenueResponse);
 
         if (revenueResponse) {
-          setStatictisByTime(revenueResponse.data);
+          setStatictisByTime(allRevenueResponse.data);
         } else {
           console.error('Không có dữ liệu doanh thu.');
         }
@@ -239,12 +239,36 @@ const HomePage = () => {
     }
   };
 
+  const totalRevenue = useMemo(
+    () =>
+      statictisByYear
+        ?.map((item) => item.totalRevenue)
+        .reduce((a, b) => a + b, 0),
+    [statictisByYear]
+  );
+
+  const totalOrders = useMemo(
+    () =>
+      statictisByYear
+        ?.map((item) => item.totalOrders)
+        .reduce((a, b) => a + b, 0),
+    [statictisByYear]
+  );
+
+  const totalProductSolds = useMemo(
+    () =>
+      statictisByYear
+        ?.map((item) => item.totalProducts)
+        .reduce((a, b) => a + b, 0),
+    [statictisByYear]
+  );
+
   return (
     <>
       <div className='p-2' id='page1'>
         <Header />
         {/* form control */}
-        <div className='mb-6 flex justify-between'>
+        {/* <div className='mb-6 flex justify-between'>
           <FormControl className='w-1/4'>
             <InputLabel>Choose time for statistic</InputLabel>
             <Select
@@ -346,26 +370,15 @@ const HomePage = () => {
               />
             </div>
           )}
-        </div>
+        </div> */}
         {/* Nội dung chính */}
         <div>
+          {console.log(statictisByYear)}
           <Dashboard
-            totalRevenue={
-              timeFrame === 'year'
-                ? statictisByYear?.totalRevenue
-                : statictisByTime?.totalRevenue
-            }
-            totalOrders={
-              timeFrame === 'year'
-                ? statictisByYear?.totalOrders
-                : statictisByTime?.totalOrders
-            }
+            totalRevenue={totalRevenue}
+            totalOrders={totalOrders}
             totalUsers={totalUsersByTime?.totalUsersUntilEndDate}
-            totalProductsSold={
-              timeFrame === 'year'
-                ? statictisByYear?.totalProductsSold
-                : statictisByTime?.totalProductsSold
-            }
+            totalProductsSold={totalProductSolds}
           />
           <RevenueStatistic
             timeFrame={timeFrame}
@@ -430,12 +443,12 @@ const HomePage = () => {
         />
       </div> */}
 
-      <button
+      {/* <button
         className='mb-4 rounded bg-purple-800 p-2 text-white'
         onClick={handlePrintReport}
       >
         Export to PDF
-      </button>
+      </button> */}
     </>
   );
 };

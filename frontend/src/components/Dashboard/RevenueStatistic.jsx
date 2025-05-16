@@ -31,8 +31,7 @@ const RevenueStatistic = ({ timeFrame, year, statictisByTime, time }) => {
   });
 
   const getDateLabels = (data) => data?.map((item) => item.time);
-  const getYearLabels = (data) =>
-    data?.map((item) => dayjs(item.time).format('DD-MM'));
+  const getYearLabels = (data) => data?.map((item) => item.monthLabel);
   const chartData = {
     labels:
       timeFrame === 'day' || timeFrame === 'month'
@@ -50,20 +49,6 @@ const RevenueStatistic = ({ timeFrame, year, statictisByTime, time }) => {
         'rgba(0, 123, 255, 0.6)',
         'rgba(0, 123, 255, 1)'
       ),
-      getDataset(
-        statictisByTime ? statictisByTime.map((item) => item.paidRevenue) : [],
-        'Paid',
-        'rgba(40, 167, 69, 0.6)',
-        'rgba(40, 167, 69, 1)'
-      ),
-      getDataset(
-        statictisByTime
-          ? statictisByTime.map((item) => item.unpaidRevenue)
-          : [],
-        'Unpaid',
-        'rgba(255, 99, 132, 0.6)',
-        'rgba(255, 99, 132, 1)'
-      ),
     ],
   };
 
@@ -79,7 +64,7 @@ const RevenueStatistic = ({ timeFrame, year, statictisByTime, time }) => {
       tooltip: {
         callbacks: {
           label: function (tooltipItem) {
-            return `${tooltipItem.raw.toLocaleString()} VNĐ`;
+            return `$ ${tooltipItem.raw.toLocaleString()}`;
           },
         },
       },

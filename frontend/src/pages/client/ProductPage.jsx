@@ -1,5 +1,5 @@
 import { useLocation } from 'react-router-dom';
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState, useMemo, useCallback } from 'react';
 import productService from '../../services/product.service';
 import CustomBreedCrumb from '../../components/CustomBreedCrumb';
 import Filter from '../../components/Products/Filter';
@@ -15,46 +15,74 @@ const ProductPage = () => {
 
   const [selectedTypes, setSelectedTypes] = useState([]);
   const [selectedRecommendations, setSelectedRecommendations] = useState([]);
-  const [products, setProducts] = useState([]);
+  const [allProducts, setAllProducts] = useState([]);
+  const [filteredProducts, setFilteredProducts] = useState([]);
+  const [displayProducts, setDisplayProducts] = useState([]);
   const [totalPage, setTotalPage] = useState(0);
   const [loading, setLoading] = useState(false);
 
   const page = parseInt(query.get('page') || '1', 10);
+  const ITEMS_PER_PAGE = 8;
 
   useEffect(() => {
-    const fetchProducts = async () => {
+    const fetchAllProducts = async () => {
       try {
         setLoading(true);
-        const updatedQuery = new URLSearchParams(location.search);
+        const baseQuery = new URLSearchParams(location.search);
 
-        if (selectedTypes.length > 0)
-          updatedQuery.set('productType', selectedTypes.join(','));
-        if (selectedRecommendations.length > 0)
-          updatedQuery.set(
-            'recommendedTypes',
-            selectedRecommendations.join(',')
-          );
+        baseQuery.delete('page');
+        baseQuery.delete('productType');
+        baseQuery.delete('recommendedTypes');
 
         const response = await productService.getProducts(
-          updatedQuery,
-          page,
-          8,
+          baseQuery,
+          1,
+          1000,
           null
         );
 
-        setProducts(response.data);
-        setTotalPage(response.meta.totalPages);
+        setAllProducts(response.data);
       } catch (error) {
-        setLoading(false);
-        setProducts([]);
         console.error('Error fetching products:', error);
+        setAllProducts([]);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchProducts();
-  }, [location.search, selectedTypes, selectedRecommendations, page]);
+    fetchAllProducts();
+  }, [location.pathname, location.search]);
+
+  const applyFilters = useCallback(() => {
+    let results = [...allProducts];
+
+    if (selectedTypes.length > 0) {
+      results = results.filter((product) =>
+        selectedTypes.includes(product.productType?.productTypeName)
+      );
+    }
+
+    if (selectedRecommendations.length > 0) {
+      results = results.filter((product) =>
+        product.recommendedTypes?.some((type) =>
+          selectedRecommendations.includes(type)
+        )
+      );
+    }
+
+    setFilteredProducts(results);
+
+    const totalPages = Math.ceil(results.length / ITEMS_PER_PAGE);
+    setTotalPage(totalPages);
+
+    const startIndex = (page - 1) * ITEMS_PER_PAGE;
+    const endIndex = startIndex + ITEMS_PER_PAGE;
+    setDisplayProducts(results.slice(startIndex, endIndex));
+  }, [allProducts, selectedTypes, selectedRecommendations, page]);
+
+  useEffect(() => {
+    applyFilters();
+  }, [applyFilters]);
 
   const handleTypeChange = (types) => {
     setSelectedTypes(types);
@@ -64,11 +92,11 @@ const ProductPage = () => {
     setSelectedRecommendations(recommendations);
   };
 
-  const productType = products[0]?.productTypeDetails?.productTypeName;
+  const productType = displayProducts[0]?.productTypeDetails?.productTypeName;
 
   return (
     <>
-      {products.length > 0 && (
+      {displayProducts.length > 0 && (
         <CustomBreedCrumb
           breadcrumbs={[
             { label: 'Home', href: '/' },
@@ -84,7 +112,9 @@ const ProductPage = () => {
           <Filter
             onTypeChange={handleTypeChange}
             onRecommendedChange={handleRecommendedChange}
-            priceOptions={[]}
+            allProducts={allProducts}
+            selectedTypes={selectedTypes}
+            selectedRecommendations={selectedRecommendations}
           />
         </div>
         <div className='w-full lg:w-4/5 ml-2'>
@@ -94,11 +124,35 @@ const ProductPage = () => {
             </div>
           ) : (
             <>
-              <div className='grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3'>
-                {products.map((product, index) => (
-                  <ProductItem key={index} product={product} />
-                ))}
+              <div className='mb-4 flex justify-between items-center'>
+                <p className='text-gray-600'>
+                  Showing {displayProducts.length} of {filteredProducts.length}{' '}
+                  products
+                </p>
               </div>
+
+              {displayProducts.length === 0 ? (
+                <div className='text-center py-10'>
+                  <p className='text-xl text-gray-500'>
+                    No products found matching your criteria
+                  </p>
+                  <button
+                    className='mt-4 px-4 py-2 bg-primary text-white rounded hover:bg-hover-primary'
+                    onClick={() => {
+                      setSelectedTypes([]);
+                      setSelectedRecommendations([]);
+                    }}
+                  >
+                    Clear Filters
+                  </button>
+                </div>
+              ) : (
+                <div className='grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3'>
+                  {displayProducts.map((product, index) => (
+                    <ProductItem key={index} product={product} />
+                  ))}
+                </div>
+              )}
             </>
           )}
           <CustomPagination

@@ -35,6 +35,16 @@ const orderSchema = new mongoose.Schema(
       ref: 'OrderStatus',
       default: '6824b9434a7c56ff9a4d24b4',
     },
+    deliveryMethod: {
+      type: String,
+      enum: ['Standard', 'Express'],
+      default: 'Standard',
+    },
+    paymentMethod: {
+      type: String,
+      enum: ['COD'],
+      default: 'COD',
+    },
     deliveredDate: {
       type: Date,
     },

@@ -1,23 +1,12 @@
 import LocalAtmIcon from '@mui/icons-material/LocalAtm';
 import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
 import NewspaperIcon from '@mui/icons-material/Newspaper';
-import SportsTennisIcon from '@mui/icons-material/SportsTennis';
-import { toVietnamCurrencyFormat } from '../../helpers/currencyConvertion';
-import { FaGift } from 'react-icons/fa6';
 
-// import { toast } from 'react-toastify';
-
-function Dashboard({
-  totalRevenue,
-  totalOrders,
-  totalUsers,
-  totalProductsSold,
-}) {
-  console.log(totalRevenue, totalOrders, totalUsers, totalProductsSold);
+function Dashboard({ totalRevenue, totalOrders, totalUsers }) {
   const statsData = [
     {
       title: 'Revenue',
-      value: toVietnamCurrencyFormat(totalRevenue) || 0,
+      value: `$ ${totalRevenue ? Number(totalRevenue.toFixed(3)) : 0}`,
       color: 'text-pink-500',
       icon: <LocalAtmIcon className='text-2xl text-white' />,
     },
@@ -26,12 +15,6 @@ function Dashboard({
       value: totalOrders || 0,
       color: 'text-yellow-500',
       icon: <NewspaperIcon className='text-2xl text-white' />,
-    },
-    {
-      title: 'Total Products',
-      value: totalProductsSold || 0,
-      color: 'text-yellow-500',
-      icon: <FaGift className='text-2xl text-white' />,
     },
     {
       title: 'Total Users',
@@ -44,7 +27,7 @@ function Dashboard({
   return (
     <div className='bg-gray-50'>
       {/* Stats Cards */}
-      <div className='mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4'>
+      <div className='mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3'>
         {statsData.map((stat, index) => (
           <div
             key={index}

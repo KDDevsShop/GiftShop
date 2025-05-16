@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import PropTypes from 'prop-types';
@@ -16,14 +16,7 @@ const CartSidebar = ({ isOpen, onClose }) => {
 
   const accessToken = useMemo(() => localStorage.getItem('acccessToken'), []);
 
-  useEffect(() => {
-    // Fetch cart data when sidebar opens
-    if (isOpen) {
-      fetchCartData();
-    }
-  }, [isOpen]);
-
-  const fetchCartData = async () => {
+  const fetchCartData = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
@@ -49,34 +42,41 @@ const CartSidebar = ({ isOpen, onClose }) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [accessToken]);
+
+  useEffect(() => {
+    // Fetch cart data when sidebar opens
+    if (isOpen) {
+      fetchCartData();
+    }
+  }, [isOpen, fetchCartData]);
 
   const handleUpdateQuantity = async (itemId, newQuantity) => {
     try {
       if (newQuantity < 1) return;
 
-      setLoading(true);
-      await cartService.updateCartItemQuantity(itemId, newQuantity);
+      await cartService.updateQuantity(accessToken, {
+        productId: itemId,
+        quantity: newQuantity,
+      });
 
       // Refetch cart data to get the updated totals
-      fetchCartData();
+      await fetchCartData();
 
       toast.success('Cart updated');
     } catch (err) {
       console.error('Error updating cart:', err);
       toast.error('Failed to update cart. Please try again.');
-    } finally {
-      setLoading(false);
     }
   };
 
   const handleRemoveItem = async (itemId) => {
     try {
       setLoading(true);
-      await cartService.removeCartItem(itemId);
+      await cartService.deleteItem(accessToken, itemId);
 
       // Refetch cart data to get the updated totals
-      fetchCartData();
+      await fetchCartData();
 
       toast.success('Item removed from cart');
     } catch (err) {
@@ -308,7 +308,7 @@ const CartSidebar = ({ isOpen, onClose }) => {
                                     ).toFixed(2)}
                               </span>
                               <button
-                                className='ml-4 text-red-500 hover:text-red-700'
+                                className='ml-4 text-red-500 hover:text-red-700 cursor-pointer'
                                 onClick={() => handleRemoveItem(item._id)}
                                 disabled={loading}
                               >
@@ -355,7 +355,7 @@ const CartSidebar = ({ isOpen, onClose }) => {
                 <div className='grid grid-cols-2 gap-2'>
                   <button
                     onClick={handleCheckout}
-                    className='w-full bg-purple-800 hover:bg-purple-700 text-white py-3 rounded-lg font-bold transition duration-150'
+                    className='w-full bg-purple-800 hover:bg-purple-700 text-white py-3 rounded-lg font-bold transition duration-150 cursor-pointer'
                     disabled={loading}
                   >
                     {loading ? (
@@ -366,7 +366,7 @@ const CartSidebar = ({ isOpen, onClose }) => {
                   </button>
                   <Link
                     to={'/cart'}
-                    className='w-full bg-purple-800 hover:bg-purple-700 text-white text-center py-3 rounded-lg font-bold transition duration-150'
+                    className='w-full bg-purple-800 hover:bg-purple-700 text-white text-center py-3 rounded-lg font-bold transition duration-150 cursor-pointer'
                   >
                     Go to cart
                   </Link>
@@ -374,7 +374,7 @@ const CartSidebar = ({ isOpen, onClose }) => {
 
                 <button
                   onClick={onClose}
-                  className='w-full mt-2 text-purple-800 hover:underline py-2'
+                  className='w-full mt-2 text-purple-800 hover:underline py-2 cursor-pointer'
                 >
                   Continue Shopping
                 </button>
