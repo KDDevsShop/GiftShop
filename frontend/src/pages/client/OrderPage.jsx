@@ -79,9 +79,9 @@ function OrderPage() {
         fullname: defaultAddress?.fullname || '',
         phone: defaultAddress?.phone || '',
         address: defaultAddress
-          ? `${selectedAddress.detail ? selectedAddress.detail + ', ' : ''}${
-              selectedAddress.commune
-            }, ${selectedAddress.district}, ${selectedAddress.province}`
+          ? `${defaultAddress.detail ? defaultAddress.detail + ', ' : ''}${
+              defaultAddress.commune
+            }, ${defaultAddress.district}, ${defaultAddress.province}`
           : '',
         email: user.email || '',
         notes: '',
